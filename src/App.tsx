@@ -15,6 +15,12 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import VideoSession from "./pages/VideoSession";
 
+// Therapist Pages
+import Patients from "./pages/therapist/Patients";
+import TherapyPlans from "./pages/therapist/TherapyPlans";
+import Assessments from "./pages/therapist/Assessments";
+import LearningModules from "./pages/therapist/LearningModules";
+
 const queryClient = new QueryClient();
 
 // Protected route wrapper
@@ -57,6 +63,43 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <VideoSession />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Therapist routes */}
+      <Route 
+        path="/patients" 
+        element={
+          <ProtectedRoute>
+            <Patients />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/therapy-plans" 
+        element={
+          <ProtectedRoute>
+            <TherapyPlans />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/assessments" 
+        element={
+          <ProtectedRoute>
+            <Assessments />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/learning-modules" 
+        element={
+          <ProtectedRoute>
+            <LearningModules />
           </ProtectedRoute>
         } 
       />
