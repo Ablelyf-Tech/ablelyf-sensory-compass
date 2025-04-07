@@ -20,6 +20,14 @@ export const CameraModule: React.FC<CameraModuleProps> = ({ role }) => {
   const streamRef = useRef<MediaStream | null>(null);
   const { toast } = useToast();
 
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
   const getRoleSpecificTitle = () => {
     switch (role) {
       case 'therapist':
@@ -38,7 +46,6 @@ export const CameraModule: React.FC<CameraModuleProps> = ({ role }) => {
   };
 
   const getRoleSpecificInsights = () => {
-    // Mock AI insights based on role
     switch (role) {
       case 'therapist':
         return [
@@ -76,13 +83,11 @@ export const CameraModule: React.FC<CameraModuleProps> = ({ role }) => {
   };
 
   useEffect(() => {
-    // Simulate AI analysis with random insights
     const timer = setInterval(() => {
       const sentiments = ['positive', 'neutral', 'negative'] as const;
       const randomSentiment = sentiments[Math.floor(Math.random() * sentiments.length)];
       setAiSentiment(randomSentiment);
       
-      // Set role-specific insights
       setAiInsights(getRoleSpecificInsights());
     }, 5000);
 
@@ -110,15 +115,12 @@ export const CameraModule: React.FC<CameraModuleProps> = ({ role }) => {
         });
       } else {
         if (streamRef.current) {
-          streamRef.current.getVideoTracks().forEach(track => track.stop());
+          const videoTracks = streamRef.current.getVideoTracks();
+          videoTracks.forEach(track => track.stop());
           
-          // If audio is still on, we need to keep the audio tracks
-          if (isAudioOn) {
-            const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            streamRef.current = audioStream;
-            if (videoRef.current) {
-              videoRef.current.srcObject = null;
-            }
+          videoTracks.forEach(track => streamRef.current?.removeTrack(track));
+          
+          if (isAudioOn && streamRef.current.getAudioTracks().length > 0) {
           } else {
             streamRef.current = null;
             if (videoRef.current) {
@@ -147,15 +149,13 @@ export const CameraModule: React.FC<CameraModuleProps> = ({ role }) => {
   const toggleAudio = async () => {
     try {
       if (!isAudioOn) {
-        // If video is already on, just add audio to the existing stream
-        if (isVideoOn && streamRef.current) {
-          const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+        if (streamRef.current && isVideoOn) {
           const audioTrack = audioStream.getAudioTracks()[0];
           streamRef.current.addTrack(audioTrack);
         } else {
-          // If video is off, create a new audio-only stream
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          streamRef.current = stream;
+          streamRef.current = audioStream;
         }
         
         setIsAudioOn(true);
@@ -166,14 +166,17 @@ export const CameraModule: React.FC<CameraModuleProps> = ({ role }) => {
         });
       } else {
         if (streamRef.current) {
-          streamRef.current.getAudioTracks().forEach(track => track.stop());
+          const audioTracks = streamRef.current.getAudioTracks();
+          audioTracks.forEach(track => track.stop());
           
-          // If video is still on, keep the video tracks
-          if (isVideoOn) {
-            const videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
-            streamRef.current = videoStream;
+          audioTracks.forEach(track => streamRef.current?.removeTrack(track));
+          
+          if (isVideoOn && streamRef.current.getVideoTracks().length > 0) {
           } else {
             streamRef.current = null;
+            if (videoRef.current) {
+              videoRef.current.srcObject = null;
+            }
           }
         }
         
