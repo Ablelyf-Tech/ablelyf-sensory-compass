@@ -2,6 +2,7 @@
 import React from 'react';
 import { LoginForm } from '@/components/auth/LoginForm';
 import { Brain } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Login: React.FC = () => {
   return (
@@ -14,6 +15,12 @@ const Login: React.FC = () => {
         <p className="text-ablelyf-blue-700">Sensory Care Platform</p>
       </div>
       <LoginForm />
+      <div className="mt-4 text-sm text-ablelyf-blue-700">
+        <p>Don't have an account? <Link to="/register" className="text-ablelyf-blue-600 hover:underline">Register</Link></p>
+        <p className="mt-2 text-center text-xs text-ablelyf-blue-500">
+          © {new Date().getFullYear()} AbleLyf Sensory Care. All rights reserved.
+        </p>
+      </div>
     </div>
   );
 };

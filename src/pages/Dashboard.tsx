@@ -8,9 +8,10 @@ import { ProgressChart } from '@/components/dashboard/ProgressChart';
 import { AlertList } from '@/components/dashboard/AlertList';
 import { TherapyPlanCard } from '@/components/dashboard/TherapyPlanCard';
 import { patients, progressData, alertData, therapyPlans } from '@/data/mockData';
-import { User, Brain, Activity, Calendar, AlertTriangle, Clock, Users, BarChart } from 'lucide-react';
+import { User, Brain, Activity, Calendar, AlertTriangle, Clock, Users, BarChart, FileText } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { ResponsiveContainer } from 'recharts';
 
 const Dashboard: React.FC = () => {
   const { currentUser } = useAuth();
