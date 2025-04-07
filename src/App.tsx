@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import VideoSession from "./pages/VideoSession";
 
 const queryClient = new QueryClient();
 
@@ -45,6 +46,16 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Video Session route */}
+      <Route 
+        path="/video-session" 
+        element={
+          <ProtectedRoute>
+            <VideoSession />
           </ProtectedRoute>
         } 
       />

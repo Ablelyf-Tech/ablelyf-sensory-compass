@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { 
   User, LogOut, Home, Users, Activity, Calendar, Settings, 
-  FileText, AlertTriangle, Brain, Award
+  FileText, AlertTriangle, Brain, Award, Video
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -28,6 +28,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const getNavItems = () => {
     const baseItems = [
       { name: 'Dashboard', path: '/dashboard', icon: Home },
+      { name: 'Video Session', path: '/video-session', icon: Video },
     ];
 
     const roleSpecificItems = {
