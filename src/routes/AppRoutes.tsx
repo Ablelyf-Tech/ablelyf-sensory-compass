@@ -12,11 +12,11 @@ export const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Index />} />
-      <PublicRoutes />
-      <TherapistRoutes />
-      <CaregiverRoutes />
-      <TeacherRoutes />
-      <SharedRoutes />
+      <Route path="/*" element={<PublicRoutes />} />
+      <Route path="/*" element={<TherapistRoutes />} />
+      <Route path="/*" element={<CaregiverRoutes />} />
+      <Route path="/*" element={<TeacherRoutes />} />
+      <Route path="/*" element={<SharedRoutes />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

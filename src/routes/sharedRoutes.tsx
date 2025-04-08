@@ -1,5 +1,5 @@
 
-import { Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
 import VideoSession from "@/pages/VideoSession";
@@ -7,9 +7,9 @@ import NotFound from "@/pages/NotFound";
 
 export const SharedRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route 
-        path="/dashboard" 
+        path="dashboard" 
         element={
           <ProtectedRoute>
             <Dashboard />
@@ -18,7 +18,7 @@ export const SharedRoutes = () => {
       />
       
       <Route 
-        path="/video-session" 
+        path="video-session" 
         element={
           <ProtectedRoute>
             <VideoSession />
@@ -28,6 +28,6 @@ export const SharedRoutes = () => {
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />
-    </>
+    </Routes>
   );
 };

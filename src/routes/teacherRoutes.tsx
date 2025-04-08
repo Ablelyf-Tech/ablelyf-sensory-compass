@@ -1,5 +1,5 @@
 
-import { Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Classroom from "@/pages/teacher/Classroom";
 import ProgressReports from "@/pages/teacher/ProgressReports";
@@ -8,9 +8,9 @@ import TeacherCalendar from "@/pages/teacher/Calendar";
 
 export const TeacherRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route 
-        path="/classroom" 
+        path="classroom" 
         element={
           <ProtectedRoute>
             <Classroom />
@@ -19,7 +19,7 @@ export const TeacherRoutes = () => {
       />
       
       <Route 
-        path="/progress" 
+        path="progress" 
         element={
           <ProtectedRoute>
             <ProgressReports />
@@ -28,7 +28,7 @@ export const TeacherRoutes = () => {
       />
       
       <Route 
-        path="/materials" 
+        path="materials" 
         element={
           <ProtectedRoute>
             <Materials />
@@ -37,13 +37,13 @@ export const TeacherRoutes = () => {
       />
       
       <Route 
-        path="/teacher-calendar" 
+        path="teacher-calendar" 
         element={
           <ProtectedRoute>
             <TeacherCalendar />
           </ProtectedRoute>
         } 
       />
-    </>
+    </Routes>
   );
 };
