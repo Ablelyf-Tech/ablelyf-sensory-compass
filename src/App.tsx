@@ -20,6 +20,7 @@ import Patients from "./pages/therapist/Patients";
 import TherapyPlans from "./pages/therapist/TherapyPlans";
 import Assessments from "./pages/therapist/Assessments";
 import LearningModules from "./pages/therapist/LearningModules";
+import Schedule from "./pages/therapist/Schedule";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <LearningModules />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/schedule" 
+        element={
+          <ProtectedRoute>
+            <Schedule />
           </ProtectedRoute>
         } 
       />

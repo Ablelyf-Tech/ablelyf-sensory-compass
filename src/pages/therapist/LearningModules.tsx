@@ -14,6 +14,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from '@/hooks/use-toast';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle 
+} from '@/components/ui/dialog';
 
 // Mock learning modules data
 const learningModules = [
@@ -90,6 +97,8 @@ const LearningModules: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [levelFilter, setLevelFilter] = useState('all');
+  const [selectedModule, setSelectedModule] = useState<typeof learningModules[0] | null>(null);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
 
   // Filter modules based on search, category and level
   const filteredModules = learningModules.filter(module => {
@@ -117,11 +126,42 @@ const LearningModules: React.FC = () => {
   };
 
   // Handle module action
-  const handleModuleAction = (action: string, moduleTitle: string) => {
+  const handleModuleAction = (action: string, module: typeof learningModules[0]) => {
+    switch (action) {
+      case 'Share':
+        setSelectedModule(module);
+        setIsShareDialogOpen(true);
+        break;
+      case 'Start':
+        toast({
+          title: "Starting Module",
+          description: `Starting "${module.title}" learning module`,
+        });
+        break;
+      case 'Create':
+        toast({
+          title: "Create Module",
+          description: "Opening module creation form",
+        });
+        break;
+      default:
+        toast({
+          title: `${action} Module`,
+          description: `${action} "${module.title}" module`,
+        });
+    }
+  };
+
+  const handleShareModule = (moduleId: string, shareMethod: string) => {
+    const module = learningModules.find(m => m.id === moduleId);
+    if (!module) return;
+    
     toast({
-      title: `${action} Module`,
-      description: `${action} "${moduleTitle}" module`,
+      title: `Module Shared`,
+      description: `"${module.title}" shared via ${shareMethod}`,
     });
+    
+    setIsShareDialogOpen(false);
   };
 
   return (
@@ -132,7 +172,10 @@ const LearningModules: React.FC = () => {
             <h1 className="text-2xl font-bold tracking-tight">Learning Modules</h1>
             <p className="text-muted-foreground">Professional development resources and training modules</p>
           </div>
-          <Button className="flex items-center gap-2">
+          <Button 
+            className="flex items-center gap-2"
+            onClick={() => handleModuleAction('Create', {} as typeof learningModules[0])}
+          >
             <Plus size={16} />
             <span>Create Module</span>
           </Button>
@@ -220,7 +263,7 @@ const LearningModules: React.FC = () => {
                   variant="ghost" 
                   size="sm" 
                   className="text-xs"
-                  onClick={() => handleModuleAction('Share', module.title)}
+                  onClick={() => handleModuleAction('Share', module)}
                 >
                   <Share2 size={14} className="mr-1" />
                   Share
@@ -229,7 +272,7 @@ const LearningModules: React.FC = () => {
                   variant="default"
                   size="sm"
                   className="text-xs gap-1"
-                  onClick={() => handleModuleAction('Start', module.title)}
+                  onClick={() => handleModuleAction('Start', module)}
                 >
                   <Play size={14} className="mr-1" />
                   Start Learning
@@ -239,6 +282,56 @@ const LearningModules: React.FC = () => {
           ))}
         </div>
       </div>
+
+      {/* Share Module Dialog */}
+      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Share Module</DialogTitle>
+            <DialogDescription>
+              Share this learning module with colleagues or patients
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-4">
+            <p className="font-medium">{selectedModule?.title}</p>
+            <p className="text-sm text-muted-foreground">{selectedModule?.description}</p>
+            
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Share via:</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => selectedModule && handleShareModule(selectedModule.id, 'Email')}
+                >
+                  Email
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => selectedModule && handleShareModule(selectedModule.id, 'SMS')}
+                >
+                  SMS
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => selectedModule && handleShareModule(selectedModule.id, 'Patient Portal')}
+                >
+                  Patient Portal
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => selectedModule && handleShareModule(selectedModule.id, 'Copy Link')}
+                >
+                  Copy Link
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppLayout>
   );
 };

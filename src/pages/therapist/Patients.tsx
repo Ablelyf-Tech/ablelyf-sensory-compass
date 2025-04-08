@@ -15,21 +15,57 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import ScheduleModal from '@/components/therapist/ScheduleModal';
+import { useNavigate } from 'react-router-dom';
 
 const Patients: React.FC = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const navigate = useNavigate();
 
   const filteredPatients = patients.filter(patient => 
     patient.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handlePatientAction = (action: string, patientName: string) => {
+  const handlePatientAction = (action: string, patientName: string, patientId?: string) => {
+    switch (action) {
+      case 'View':
+        toast({
+          title: "Viewing patient details",
+          description: `Viewing details for ${patientName}`,
+        });
+        break;
+      case 'Edit':
+        toast({
+          title: "Edit patient profile",
+          description: `Editing profile for ${patientName}`,
+        });
+        break;
+      case 'Schedule':
+        // Schedule is now handled by the ScheduleModal component
+        break;
+      case 'CreatePlan':
+        navigate('/therapy-plans');
+        toast({
+          title: "Create therapy plan",
+          description: `Creating a new plan for ${patientName}`,
+        });
+        break;
+      default:
+        toast({
+          title: `${action} patient`,
+          description: `${action} ${patientName} selected`,
+        });
+    }
+  };
+
+  const handleAddPatient = () => {
     toast({
-      title: `${action} patient`,
-      description: `${action} ${patientName} selected`,
+      title: "Add Patient",
+      description: "Opening new patient form",
     });
+    // In a real app, this would open a form or navigate to an add patient page
   };
 
   return (
@@ -40,7 +76,7 @@ const Patients: React.FC = () => {
             <h1 className="text-2xl font-bold tracking-tight">Patients</h1>
             <p className="text-muted-foreground">Manage your patient profiles and therapy plans</p>
           </div>
-          <Button className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" onClick={handleAddPatient}>
             <Plus size={16} />
             <span>Add Patient</span>
           </Button>
@@ -96,8 +132,14 @@ const Patients: React.FC = () => {
                     <DropdownMenuItem onClick={() => handlePatientAction('Edit', patient.name)}>
                       Edit Profile
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handlePatientAction('Schedule', patient.name)}>
-                      Schedule Session
+                    <DropdownMenuItem>
+                      <ScheduleModal 
+                        patientName={patient.name} 
+                        patientId={patient.id}
+                        buttonText="Schedule Session"
+                        buttonVariant="ghost"
+                        customButtonClass="w-full justify-start"
+                      />
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -116,12 +158,20 @@ const Patients: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-end pt-2">
+                  <div className="flex justify-between pt-2">
+                    <ScheduleModal 
+                      patientName={patient.name} 
+                      patientId={patient.id}
+                      buttonText="Schedule"
+                      buttonVariant="outline"
+                      buttonSize="sm"
+                      customButtonClass="text-xs"
+                    />
                     <Button 
                       variant="outline" 
                       size="sm" 
                       className="text-xs"
-                      onClick={() => handlePatientAction('View', patient.name)}
+                      onClick={() => handlePatientAction('CreatePlan', patient.name, patient.id)}
                     >
                       <Edit size={14} className="mr-1" />
                       Create Plan

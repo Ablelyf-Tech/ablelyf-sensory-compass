@@ -17,11 +17,14 @@ import {
 } from "@/components/ui/select";
 import { TherapyPlan } from '@/types';
 import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/hooks/use-toast';
+import ScheduleModal from '@/components/therapist/ScheduleModal';
 
 const TherapyPlans: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [patientFilter, setPatientFilter] = useState('all');
+  const { toast } = useToast();
 
   // Filter therapy plans based on search, status and patient
   const filteredPlans = therapyPlans.filter(plan => {
@@ -58,6 +61,21 @@ const TherapyPlans: React.FC = () => {
     return patient ? patient.name : 'Unknown Patient';
   };
 
+  const handlePlanAction = (action: string, planId: string, planTitle: string) => {
+    toast({
+      title: `${action} Plan`,
+      description: `${action} therapy plan "${planTitle}"`,
+    });
+  };
+
+  const handleCreatePlan = () => {
+    toast({
+      title: "Create Plan",
+      description: "Opening new therapy plan form",
+    });
+    // In a real app, this would open a form to create a new therapy plan
+  };
+
   return (
     <AppLayout>
       <div className="space-y-6">
@@ -66,7 +84,7 @@ const TherapyPlans: React.FC = () => {
             <h1 className="text-2xl font-bold tracking-tight">Therapy Plans</h1>
             <p className="text-muted-foreground">Create and manage therapy plans for your patients</p>
           </div>
-          <Button className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" onClick={handleCreatePlan}>
             <Plus size={16} />
             <span>New Plan</span>
           </Button>
@@ -168,14 +186,34 @@ const TherapyPlans: React.FC = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="pt-2 border-t flex justify-between">
-                  <Button variant="ghost" size="sm" className="text-xs">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => handlePlanAction('View Collaborators', plan.id, plan.title)}
+                  >
                     <Users size={14} className="mr-1" />
                     Collaborators
                   </Button>
-                  <Button variant="default" size="sm" className="text-xs">
-                    <FileText size={14} className="mr-1" />
-                    View Details
-                  </Button>
+                  <div className="flex gap-2">
+                    <ScheduleModal 
+                      patientName={patientName}
+                      patientId={plan.patientId}
+                      buttonText="Schedule"
+                      buttonVariant="outline"
+                      buttonSize="sm"
+                      customButtonClass="text-xs"
+                    />
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="text-xs"
+                      onClick={() => handlePlanAction('View Details', plan.id, plan.title)}
+                    >
+                      <FileText size={14} className="mr-1" />
+                      View Details
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             );

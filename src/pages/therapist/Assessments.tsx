@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from '@/hooks/use-toast';
+import ScheduleModal from '@/components/therapist/ScheduleModal';
 
 // Mock assessment data
 const assessments = [
@@ -114,9 +115,48 @@ const Assessments: React.FC = () => {
 
   // Handle assessment action
   const handleAssessmentAction = (action: string, assessmentId: string) => {
+    const assessment = assessments.find(a => a.id === assessmentId);
+    if (!assessment) return;
+    
+    const patientName = getPatientName(assessment.patientId);
+    
+    switch (action) {
+      case 'Edit':
+        toast({
+          title: "Edit Assessment",
+          description: `Editing ${assessment.title} for ${patientName}`,
+        });
+        break;
+      case 'Start':
+        toast({
+          title: "Start Assessment",
+          description: `Starting ${assessment.title} for ${patientName}`,
+        });
+        break;
+      case 'Report':
+        toast({
+          title: "Assessment Report",
+          description: `Viewing report for ${assessment.title}`,
+        });
+        break;
+      case 'View':
+        toast({
+          title: "View Assessment",
+          description: `Viewing details for ${assessment.title}`,
+        });
+        break;
+      default:
+        toast({
+          title: `${action} Assessment`,
+          description: `${action} assessment ID: ${assessmentId}`,
+        });
+    }
+  };
+
+  const handleNewAssessment = () => {
     toast({
-      title: `${action} Assessment`,
-      description: `${action} assessment ID: ${assessmentId}`,
+      title: "New Assessment",
+      description: "Creating a new assessment",
     });
   };
 
@@ -128,7 +168,7 @@ const Assessments: React.FC = () => {
             <h1 className="text-2xl font-bold tracking-tight">Assessments</h1>
             <p className="text-muted-foreground">Create, manage and track patient assessments</p>
           </div>
-          <Button className="flex items-center gap-2">
+          <Button className="flex items-center gap-2" onClick={handleNewAssessment}>
             <Plus size={16} />
             <span>New Assessment</span>
           </Button>
@@ -234,15 +274,28 @@ const Assessments: React.FC = () => {
                       Analysis
                     </Button>
                   )}
-                  <Button 
-                    variant="default" 
-                    size="sm" 
-                    className="text-xs" 
-                    onClick={() => handleAssessmentAction('View', assessment.id)}
-                  >
-                    <FileText size={14} className="mr-1" />
-                    View Details
-                  </Button>
+                  
+                  <div className="flex gap-2">
+                    {assessment.status !== 'draft' && (
+                      <ScheduleModal 
+                        patientName={patientName}
+                        patientId={assessment.patientId}
+                        buttonText="Schedule"
+                        buttonVariant="outline"
+                        buttonSize="sm"
+                        customButtonClass="text-xs"
+                      />
+                    )}
+                    <Button 
+                      variant="default" 
+                      size="sm" 
+                      className="text-xs" 
+                      onClick={() => handleAssessmentAction('View', assessment.id)}
+                    >
+                      <FileText size={14} className="mr-1" />
+                      View Details
+                    </Button>
+                  </div>
                 </CardFooter>
               </Card>
             );
