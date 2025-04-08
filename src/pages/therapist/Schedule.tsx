@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -110,6 +109,13 @@ const Schedule: React.FC = () => {
     }
   };
 
+  const handleAddSession = () => {
+    const triggerElement = document.querySelector('[data-trigger="scheduleSessionForm"]');
+    if (triggerElement instanceof HTMLElement) {
+      triggerElement.click();
+    }
+  };
+
   return (
     <AppLayout>
       <div className="mb-6 flex justify-between items-center">
@@ -205,7 +211,7 @@ const Schedule: React.FC = () => {
                   </p>
                   <Button 
                     className="mt-4 bg-ablelyf-blue-500"
-                    onClick={() => document.querySelector('button:has(.ScheduleSessionForm)')?.click()}
+                    onClick={handleAddSession}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     Schedule Session

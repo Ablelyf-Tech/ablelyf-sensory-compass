@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -167,6 +166,13 @@ const LearningModules: React.FC = () => {
     </div>
   );
 
+  const handleAddModule = () => {
+    const triggerElement = document.querySelector('[data-trigger="learningModuleForm"]');
+    if (triggerElement instanceof HTMLElement) {
+      triggerElement.click();
+    }
+  };
+
   return (
     <AppLayout>
       <div className="mb-6 flex justify-between items-center">
@@ -226,7 +232,7 @@ const LearningModules: React.FC = () => {
                 <Book className="text-muted-foreground mb-4 h-12 w-12" />
                 <h3 className="text-xl font-medium">No Custom Modules</h3>
                 <p className="text-muted-foreground">Create your own custom modules to see them here.</p>
-                <Button className="mt-4 bg-ablelyf-blue-500" onClick={() => document.querySelector('button:has(.LearningModuleForm)')?.click()}>
+                <Button className="mt-4 bg-ablelyf-blue-500" onClick={handleAddModule}>
                   <Book className="mr-2 h-4 w-4" />
                   Create Module
                 </Button>
