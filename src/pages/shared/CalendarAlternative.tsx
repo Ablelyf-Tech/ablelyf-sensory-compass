@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from "react";
-import { format, startOfWeek, endOfWeek, addDays, isSameDay, parseISO, isWithinInterval, isValid } from "date-fns";
+import { format, startOfWeek, endOfWeek, addDays, isSameDay, isWithinInterval, isValid } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,8 +12,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { DayContent, DayProps } from "react-day-picker";
 
-// Mock data for calendar events
 const mockEvents: CalendarEvent[] = [
   {
     id: "1",
@@ -84,7 +83,6 @@ const mockEvents: CalendarEvent[] = [
   },
 ];
 
-// Event type colors
 const eventTypeColors: Record<string, string> = {
   therapy: "bg-blue-100 text-blue-800 border-blue-200",
   doctor: "bg-green-100 text-green-800 border-green-200",
@@ -107,24 +105,20 @@ const CalendarAlternative = () => {
     other: true,
   });
 
-  // Filter events based on selected types
   useEffect(() => {
     setFilteredEvents(
       mockEvents.filter((event) => filters[event.type || "other"])
     );
   }, [filters]);
 
-  // Get events for a specific day
   const getEventsForDay = (day: Date) => {
     return filteredEvents.filter((event) => {
       if (!event.date) return false;
       
-      // Handle date comparison
       return isSameDay(new Date(event.date), day);
     });
   };
 
-  // Get events for current week
   const getEventsForWeek = () => {
     const weekStart = startOfWeek(selectedDate);
     const weekEnd = endOfWeek(selectedDate);
@@ -135,11 +129,9 @@ const CalendarAlternative = () => {
     });
   };
 
-  // Format time for display
   const formatTime = (time?: string) => {
     if (!time) return "";
     
-    // Handle time formatting
     const [hours, minutes] = time.split(":").map(Number);
     if (isNaN(hours) || isNaN(minutes)) return time;
     
@@ -148,7 +140,6 @@ const CalendarAlternative = () => {
     return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
   };
 
-  // Generate week days for week view
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const day = addDays(startOfWeek(selectedDate), i);
     return {
@@ -253,21 +244,19 @@ const CalendarAlternative = () => {
                 onSelect={(date) => date && setSelectedDate(date)}
                 className="rounded-md border"
                 components={{
-                  Day: ({ day, ...props }) => {
-                    const events = getEventsForDay(day);
+                  Day: (props: DayProps) => {
+                    const date = props.date;
+                    const events = date ? getEventsForDay(date) : [];
                     return (
                       <div
-                        {...props}
                         className={cn(
-                          props.className,
                           "relative h-12 w-12 p-0 font-normal",
+                          props.selected && "text-primary-foreground",
                           events.length > 0 && "font-semibold"
                         )}
                       >
-                        <div className="flex h-full w-full items-center justify-center">
-                          {format(day, "d")}
-                        </div>
-                        {events.length > 0 && (
+                        <DayContent {...props} />
+                        {date && events.length > 0 && (
                           <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
                             {events.length > 3
                               ? <Badge variant="secondary" className="h-1.5 w-4 p-0" />
