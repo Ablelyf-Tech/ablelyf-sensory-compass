@@ -129,6 +129,13 @@ const Alerts: React.FC = () => {
       return;
     }
     
+    let actionsList: string[] | undefined = undefined;
+    if (typeof newAlert.actions === 'string') {
+      actionsList = [newAlert.actions];
+    } else if (Array.isArray(newAlert.actions)) {
+      actionsList = newAlert.actions;
+    }
+    
     const createdAlert: EnhancedAlertData = {
       id: `alert-${Date.now()}`,
       patientId: 'p1',
@@ -140,7 +147,7 @@ const Alerts: React.FC = () => {
       resolved: false,
       location: newAlert.location,
       reporter: newAlert.reporter || 'Caregiver',
-      actions: newAlert.actions ? [newAlert.actions as string] : []
+      actions: actionsList
     };
     
     setAlerts(prev => [createdAlert, ...prev]);
@@ -311,8 +318,15 @@ const Alerts: React.FC = () => {
                     id="alert-action"
                     placeholder="What action was taken?"
                     className="col-span-3"
-                    value={newAlert.actions ? newAlert.actions[0] : ''}
-                    onChange={(e) => setNewAlert({ ...newAlert, actions: [e.target.value] })}
+                    value={Array.isArray(newAlert.actions) && newAlert.actions.length > 0 
+                      ? newAlert.actions[0] 
+                      : typeof newAlert.actions === 'string' 
+                        ? newAlert.actions 
+                        : ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setNewAlert({ ...newAlert, actions: value ? [value] : undefined });
+                    }}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">

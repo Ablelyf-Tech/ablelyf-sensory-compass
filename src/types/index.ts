@@ -44,6 +44,7 @@ export interface AlertData {
   message: string;
   resolved: boolean;
   severity: 'low' | 'medium' | 'high';
+  actions?: string[];
 }
 
 export interface TherapyPlan {

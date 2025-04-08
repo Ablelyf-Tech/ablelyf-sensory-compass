@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -27,7 +26,6 @@ import {
 import { cn } from '@/lib/utils';
 import { format, addDays, addMonths, subMonths, parseISO, isSameDay, isToday } from 'date-fns';
 
-// Define calendar event types
 interface CalendarEvent {
   id: string;
   title: string;
@@ -42,7 +40,6 @@ interface CalendarEvent {
   recurring?: 'daily' | 'weekly' | 'monthly' | 'none';
 }
 
-// Mock data for calendar events
 const mockEvents: CalendarEvent[] = [
   {
     id: '1',
@@ -115,7 +112,6 @@ const mockEvents: CalendarEvent[] = [
   }
 ];
 
-// Helper functions for events
 const getEventTypeIcon = (type: CalendarEvent['type']) => {
   switch (type) {
     case 'therapy':
@@ -180,17 +176,14 @@ const CalendarPage: React.FC = () => {
     type: 'therapy',
     recurring: 'none'
   });
-  
-  // Helper function to get events for a specific date
+
   const getEventsForDate = (date: Date) => {
     return events.filter(event => isSameDay(event.date, date));
   };
-  
-  // Navigate to next/previous month
+
   const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
-  
-  // Handle creating a new event
+
   const handleCreateEvent = () => {
     if (!newEvent.title) {
       toast({
@@ -200,15 +193,15 @@ const CalendarPage: React.FC = () => {
       });
       return;
     }
-    
-    // Fix: Handle participants string properly
+
     let participants: string[] | undefined;
+    
     if (typeof newEvent.participants === 'string') {
-      participants = newEvent.participants.split(',').map(p => p.trim());
+      participants = newEvent.participants.split(',').map(p => p.trim()).filter(Boolean);
     } else {
       participants = newEvent.participants;
     }
-    
+
     const createdEvent: CalendarEvent = {
       id: `event-${Date.now()}`,
       title: newEvent.title || '',
@@ -222,7 +215,7 @@ const CalendarPage: React.FC = () => {
       recurring: newEvent.recurring as CalendarEvent['recurring'],
       completed: false
     };
-    
+
     setEvents(prev => [...prev, createdEvent]);
     setShowAddEvent(false);
     setNewEvent({
@@ -230,34 +223,32 @@ const CalendarPage: React.FC = () => {
       type: 'therapy',
       recurring: 'none'
     });
-    
+
     toast({
       title: "Event created",
       description: "Your new event has been added to the calendar.",
     });
   };
-  
-  // Handle marking an event as completed
+
   const handleMarkCompleted = (eventId: string) => {
     setEvents(prev => 
       prev.map(event => 
         event.id === eventId ? { ...event, completed: true } : event
       )
     );
-    
+
     setShowEventDetails(false);
-    
+
     toast({
       title: "Event completed",
       description: "The event has been marked as completed.",
     });
   };
-  
-  // Check if a date has events
+
   const hasEvents = (date: Date) => {
     return events.some(event => isSameDay(event.date, date));
   };
-  
+
   return (
     <AppLayout>
       <div className="space-y-6">
@@ -398,7 +389,13 @@ const CalendarPage: React.FC = () => {
                     id="event-participants"
                     placeholder="Names separated by commas"
                     className="col-span-3"
-                    value={typeof newEvent.participants === 'string' ? newEvent.participants : newEvent.participants?.join(', ') || ''}
+                    value={
+                      typeof newEvent.participants === 'string' 
+                        ? newEvent.participants 
+                        : Array.isArray(newEvent.participants) 
+                          ? newEvent.participants.join(', ') 
+                          : ''
+                    }
                     onChange={(e) => setNewEvent({ ...newEvent, participants: e.target.value })}
                   />
                 </div>
@@ -483,7 +480,9 @@ const CalendarPage: React.FC = () => {
                   hasEvents: "border border-ablelyf-blue-500 font-medium relative"
                 }}
                 components={{
-                  Day: ({ date, selected }) => {
+                  Day: (props) => {
+                    const date = props.date;
+                    const selected = props.selected;
                     const dateEvents = getEventsForDate(date);
                     const isSelected = selected && isSameDay(selected, date);
                     
