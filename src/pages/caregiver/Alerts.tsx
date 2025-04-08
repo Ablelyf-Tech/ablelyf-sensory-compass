@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -141,7 +140,7 @@ const Alerts: React.FC = () => {
       resolved: false,
       location: newAlert.location,
       reporter: newAlert.reporter || 'Caregiver',
-      actions: newAlert.actions ? [newAlert.actions] : []
+      actions: newAlert.actions ? [newAlert.actions as string] : []
     };
     
     setAlerts(prev => [createdAlert, ...prev]);
@@ -312,8 +311,8 @@ const Alerts: React.FC = () => {
                     id="alert-action"
                     placeholder="What action was taken?"
                     className="col-span-3"
-                    value={newAlert.actions || ''}
-                    onChange={(e) => setNewAlert({ ...newAlert, actions: e.target.value })}
+                    value={newAlert.actions ? newAlert.actions[0] : ''}
+                    onChange={(e) => setNewAlert({ ...newAlert, actions: [e.target.value] })}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">

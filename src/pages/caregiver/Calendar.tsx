@@ -201,6 +201,14 @@ const CalendarPage: React.FC = () => {
       return;
     }
     
+    // Fix: Handle participants string properly
+    let participants: string[] | undefined;
+    if (typeof newEvent.participants === 'string') {
+      participants = newEvent.participants.split(',').map(p => p.trim());
+    } else {
+      participants = newEvent.participants;
+    }
+    
     const createdEvent: CalendarEvent = {
       id: `event-${Date.now()}`,
       title: newEvent.title || '',
@@ -210,7 +218,7 @@ const CalendarPage: React.FC = () => {
       type: newEvent.type as CalendarEvent['type'] || 'other',
       location: newEvent.location,
       description: newEvent.description,
-      participants: newEvent.participants ? newEvent.participants.split(',').map(p => p.trim()) : undefined,
+      participants: participants,
       recurring: newEvent.recurring as CalendarEvent['recurring'],
       completed: false
     };
@@ -390,7 +398,7 @@ const CalendarPage: React.FC = () => {
                     id="event-participants"
                     placeholder="Names separated by commas"
                     className="col-span-3"
-                    value={newEvent.participants || ''}
+                    value={typeof newEvent.participants === 'string' ? newEvent.participants : newEvent.participants?.join(', ') || ''}
                     onChange={(e) => setNewEvent({ ...newEvent, participants: e.target.value })}
                   />
                 </div>
@@ -475,9 +483,9 @@ const CalendarPage: React.FC = () => {
                   hasEvents: "border border-ablelyf-blue-500 font-medium relative"
                 }}
                 components={{
-                  Day: ({ date, selectedDay }) => {
+                  Day: ({ date, selected }) => {
                     const dateEvents = getEventsForDate(date);
-                    const isSelected = selectedDay && isSameDay(selectedDay, date);
+                    const isSelected = selected && isSameDay(selected, date);
                     
                     return (
                       <div className="relative">
