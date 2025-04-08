@@ -253,7 +253,7 @@ const CalendarAlternative = () => {
                 onSelect={(date) => date && setSelectedDate(date)}
                 className="rounded-md border"
                 components={{
-                  day: ({ day, ...props }) => {
+                  Day: ({ day, ...props }) => {
                     const events = getEventsForDay(day);
                     return (
                       <div
