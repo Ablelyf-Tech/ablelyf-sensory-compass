@@ -22,6 +22,12 @@ import Assessments from "./pages/therapist/Assessments";
 import LearningModules from "./pages/therapist/LearningModules";
 import Schedule from "./pages/therapist/Schedule";
 
+// Caregiver Pages
+import PatientProfile from "./pages/caregiver/PatientProfile";
+import DailyLog from "./pages/caregiver/DailyLog";
+import Alerts from "./pages/caregiver/Alerts";
+import Calendar from "./pages/caregiver/Calendar";
+
 const queryClient = new QueryClient();
 
 // Protected route wrapper
@@ -110,6 +116,43 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Schedule />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Caregiver routes */}
+      <Route 
+        path="/patient-profile" 
+        element={
+          <ProtectedRoute>
+            <PatientProfile />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/daily-log" 
+        element={
+          <ProtectedRoute>
+            <DailyLog />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/alerts" 
+        element={
+          <ProtectedRoute>
+            <Alerts />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/calendar" 
+        element={
+          <ProtectedRoute>
+            <Calendar />
           </ProtectedRoute>
         } 
       />
