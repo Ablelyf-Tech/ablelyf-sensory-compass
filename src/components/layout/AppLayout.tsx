@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { 
@@ -8,7 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { 
   User, LogOut, Home, Users, Activity, Calendar, Settings, 
-  FileText, AlertTriangle, Brain, Award, Video, Stethoscope, Hammer
+  FileText, AlertTriangle, Brain, Award, Video, Stethoscope, Hammer,
+  Library
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -48,6 +50,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         { name: 'Assessments', path: '/assessments', icon: Activity },
         { name: 'Diagnostic Tools', path: '/diagnostic-tools', icon: Stethoscope },
         { name: 'Therapy Tools', path: '/therapy-tools', icon: Hammer },
+        { name: 'Therapy Modules', path: '/therapy-modules', icon: Brain },
+        { name: 'Therapy Tools Library', path: '/therapy-tools-library', icon: Library },
         { name: 'Learning Modules', path: '/learning-modules', icon: Brain },
       ],
       caregiver: [
