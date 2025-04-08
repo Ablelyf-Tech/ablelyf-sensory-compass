@@ -39,19 +39,19 @@ const TestimonialsSection: React.FC = () => {
           <TestimonialCard 
             name="Dr. Sarah Johnson"
             role="Occupational Therapist"
-            quote=""AbleLyf has revolutionized how I track and analyze patient progress. The AI insights help me make more informed therapy decisions.""
+            quote="AbleLyf has revolutionized how I track and analyze patient progress. The AI insights help me make more informed therapy decisions."
           />
           
           <TestimonialCard 
             name="Michael Chen"
             role="Special Education Teacher"
-            quote=""The classroom tools have made it so much easier to implement accommodations and track IEP goals in real-time.""
+            quote="The classroom tools have made it so much easier to implement accommodations and track IEP goals in real-time."
           />
           
           <TestimonialCard 
             name="Lisa Rodriguez"
             role="HR Director"
-            quote=""AbleLyf has helped us create a more inclusive workplace with better accommodations for our neurodiverse team members.""
+            quote="AbleLyf has helped us create a more inclusive workplace with better accommodations for our neurodiverse team members."
           />
         </div>
       </div>
