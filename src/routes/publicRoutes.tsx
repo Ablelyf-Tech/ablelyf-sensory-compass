@@ -10,6 +10,7 @@ export const PublicRoutes = () => {
   
   return (
     <>
+      <Route index element={<Index />} />
       <Route path="/" element={<Index />} />
       <Route 
         path="/login" 
