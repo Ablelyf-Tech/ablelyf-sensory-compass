@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface TherapyToolsHeaderProps {
   activeTab: 'browse' | 'create';
@@ -19,12 +19,10 @@ export const TherapyToolsHeader: React.FC<TherapyToolsHeaderProps> = ({
           Comprehensive collection of tools and activities for assessment and intervention
         </p>
       </div>
-      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'browse' | 'create')}>
-        <TabsList>
-          <TabsTrigger value="browse">Browse</TabsTrigger>
-          <TabsTrigger value="create">Create</TabsTrigger>
-        </TabsList>
-      </Tabs>
+      <TabsList>
+        <TabsTrigger value="browse">Browse</TabsTrigger>
+        <TabsTrigger value="create">Create</TabsTrigger>
+      </TabsList>
     </div>
   );
 };

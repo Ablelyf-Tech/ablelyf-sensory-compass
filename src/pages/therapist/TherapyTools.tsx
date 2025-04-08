@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { TherapyToolTypes } from '@/types';
 import { CreateToolDialog } from '@/components/therapist/tools/CreateToolDialog';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TherapyToolsHeader } from '@/components/therapist/tools/TherapyToolsHeader';
 import { BrowseToolsTab } from '@/components/therapist/tools/BrowseToolsTab';
 import { CreateToolsTab } from '@/components/therapist/tools/CreateToolsTab';
@@ -28,18 +28,20 @@ const TherapyTools = () => {
         setActiveTab={setActiveTab} 
       />
 
-      <TabsContent value="browse" className="space-y-6">
-        <BrowseToolsTab 
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          activeCategory={activeCategory}
-          handleCategoryChange={handleCategoryChange}
-        />
-      </TabsContent>
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'browse' | 'create')}>
+        <TabsContent value="browse" className="space-y-6">
+          <BrowseToolsTab 
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            activeCategory={activeCategory}
+            handleCategoryChange={handleCategoryChange}
+          />
+        </TabsContent>
 
-      <TabsContent value="create" className="space-y-6">
-        <CreateToolsTab onOpenCreateDialog={handleOpenCreateDialog} />
-      </TabsContent>
+        <TabsContent value="create" className="space-y-6">
+          <CreateToolsTab onOpenCreateDialog={handleOpenCreateDialog} />
+        </TabsContent>
+      </Tabs>
 
       <CreateToolDialog 
         open={createDialogOpen} 
