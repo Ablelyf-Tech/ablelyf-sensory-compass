@@ -6,6 +6,7 @@ import TherapyPlans from "@/pages/therapist/TherapyPlans";
 import Assessments from "@/pages/therapist/Assessments";
 import LearningModules from "@/pages/therapist/LearningModules";
 import Schedule from "@/pages/therapist/Schedule";
+import DiagnosticTools from "@/pages/therapist/DiagnosticTools";
 
 export const TherapistRoutes = () => {
   return (
@@ -33,6 +34,15 @@ export const TherapistRoutes = () => {
         element={
           <ProtectedRoute>
             <Assessments />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/diagnostic-tools" 
+        element={
+          <ProtectedRoute>
+            <DiagnosticTools />
           </ProtectedRoute>
         } 
       />

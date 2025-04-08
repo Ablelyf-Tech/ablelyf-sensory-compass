@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { 
   User, LogOut, Home, Users, Activity, Calendar, Settings, 
-  FileText, AlertTriangle, Brain, Award, Video
+  FileText, AlertTriangle, Brain, Award, Video, Stethoscope
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -19,6 +19,17 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const { currentUser, logout } = useAuth();
+  const currentTime = new Date();
+  const formattedTime = currentTime.toLocaleTimeString('en-US', { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    hour12: true
+  });
+  const formattedDate = currentTime.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  });
 
   if (!currentUser) {
     return <Navigate to="/login" replace />;
@@ -36,6 +47,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         { name: 'Patients', path: '/patients', icon: Users },
         { name: 'Therapy Plans', path: '/therapy-plans', icon: FileText },
         { name: 'Assessments', path: '/assessments', icon: Activity },
+        { name: 'Diagnostic Tools', path: '/diagnostic-tools', icon: Stethoscope },
         { name: 'Learning Modules', path: '/learning-modules', icon: Brain },
       ],
       caregiver: [
@@ -114,6 +126,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   <span className="text-sm font-medium">{currentUser.name}</span>
                   <span className="text-xs text-muted-foreground capitalize">{currentUser.role}</span>
                 </div>
+              </div>
+              <div className="flex justify-between items-center px-3 py-1 text-xs text-muted-foreground">
+                <span>{formattedDate}</span>
+                <span>{formattedTime}</span>
               </div>
               <Button 
                 variant="outline" 
