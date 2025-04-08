@@ -9,8 +9,6 @@ import LearningModules from "@/pages/therapist/LearningModules";
 import Schedule from "@/pages/therapist/Schedule";
 import DiagnosticTools from "@/pages/therapist/DiagnosticTools";
 import TherapyTools from "@/pages/therapist/TherapyTools";
-import TherapyModules from "@/pages/therapist/TherapyModules";
-import TherapyToolsLibrary from "@/pages/therapist/TherapyToolsLibrary";
 
 export const therapistRoutes = [
   <Route 
@@ -68,30 +66,6 @@ export const therapistRoutes = [
       <ProtectedRoute>
         <AppLayout>
           <TherapyTools />
-        </AppLayout>
-      </ProtectedRoute>
-    } 
-  />,
-  
-  <Route 
-    key="therapy-modules"
-    path="/therapy-modules" 
-    element={
-      <ProtectedRoute>
-        <AppLayout>
-          <TherapyModules />
-        </AppLayout>
-      </ProtectedRoute>
-    } 
-  />,
-  
-  <Route 
-    key="therapy-tools-library"
-    path="/therapy-tools-library" 
-    element={
-      <ProtectedRoute>
-        <AppLayout>
-          <TherapyToolsLibrary />
         </AppLayout>
       </ProtectedRoute>
     } 
