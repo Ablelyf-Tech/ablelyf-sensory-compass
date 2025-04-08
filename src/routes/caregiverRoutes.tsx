@@ -1,10 +1,12 @@
 
 import { Route } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { AppLayout } from "@/components/layout/AppLayout";
 import PatientProfile from "@/pages/caregiver/PatientProfile";
 import DailyLog from "@/pages/caregiver/DailyLog";
 import Alerts from "@/pages/caregiver/Alerts";
 import Calendar from "@/pages/caregiver/Calendar";
+import CaregiverTools from "@/pages/caregiver/CaregiverTools";
 
 export const caregiverRoutes = [
   <Route 
@@ -12,7 +14,9 @@ export const caregiverRoutes = [
     path="/patient-profile" 
     element={
       <ProtectedRoute>
-        <PatientProfile />
+        <AppLayout>
+          <PatientProfile />
+        </AppLayout>
       </ProtectedRoute>
     } 
   />,
@@ -22,7 +26,9 @@ export const caregiverRoutes = [
     path="/daily-log" 
     element={
       <ProtectedRoute>
-        <DailyLog />
+        <AppLayout>
+          <DailyLog />
+        </AppLayout>
       </ProtectedRoute>
     } 
   />,
@@ -32,7 +38,21 @@ export const caregiverRoutes = [
     path="/alerts" 
     element={
       <ProtectedRoute>
-        <Alerts />
+        <AppLayout>
+          <Alerts />
+        </AppLayout>
+      </ProtectedRoute>
+    } 
+  />,
+  
+  <Route 
+    key="caregiver-tools"
+    path="/caregiver-tools" 
+    element={
+      <ProtectedRoute>
+        <AppLayout>
+          <CaregiverTools />
+        </AppLayout>
       </ProtectedRoute>
     } 
   />,

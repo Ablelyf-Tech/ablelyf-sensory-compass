@@ -4,6 +4,7 @@ import { publicRoutes } from "./publicRoutes";
 import { therapistRoutes } from "./therapistRoutes";
 import { caregiverRoutes } from "./caregiverRoutes";
 import { teacherRoutes } from "./teacherRoutes";
+import { hrRoutes } from "./hrRoutes";
 import { sharedRoutes } from "./sharedRoutes";
 
 export const AppRoutes = () => {
@@ -17,6 +18,7 @@ export const AppRoutes = () => {
       {therapistRoutes}
       {caregiverRoutes}
       {teacherRoutes}
+      {hrRoutes}
       {sharedRoutes}
     </Routes>
   );

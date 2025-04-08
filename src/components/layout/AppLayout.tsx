@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { 
@@ -8,7 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { 
   User, LogOut, Home, Users, Activity, Calendar, Settings, 
-  FileText, AlertTriangle, Brain, Award, Video, Stethoscope, Hammer
+  FileText, AlertTriangle, Brain, Award, Video, Stethoscope, Hammer,
+  School, Briefcase
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -54,6 +56,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         { name: 'Patient Profile', path: '/patient-profile', icon: User },
         { name: 'Daily Log', path: '/daily-log', icon: Activity },
         { name: 'Alerts', path: '/alerts', icon: AlertTriangle },
+        { name: 'Home Support Tools', path: '/caregiver-tools', icon: Hammer },
         { name: 'Calendar', path: '/calendar', icon: Calendar },
       ],
       admin: [
@@ -63,14 +66,16 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         { name: 'System Settings', path: '/settings', icon: Settings },
       ],
       teacher: [
-        { name: 'Classroom', path: '/classroom', icon: Users },
+        { name: 'Classroom', path: '/classroom', icon: School },
         { name: 'Progress Reports', path: '/progress', icon: Activity },
         { name: 'Materials', path: '/materials', icon: FileText },
-        { name: 'Calendar', path: '/calendar', icon: Calendar },
+        { name: 'Classroom Tools', path: '/teacher-tools', icon: Hammer },
+        { name: 'Calendar', path: '/teacher-calendar', icon: Calendar },
       ],
       hr: [
         { name: 'Employee Profiles', path: '/employees', icon: Users },
         { name: 'Accommodation Plans', path: '/accommodations', icon: FileText },
+        { name: 'Workplace Tools', path: '/hr-tools', icon: Hammer },
         { name: 'Inclusivity Metrics', path: '/inclusivity', icon: Activity },
         { name: 'Training', path: '/training', icon: Brain },
       ],
