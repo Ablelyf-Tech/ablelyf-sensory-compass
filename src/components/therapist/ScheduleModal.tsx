@@ -33,6 +33,7 @@ interface ScheduleModalProps {
   buttonSize?: 'default' | 'sm' | 'lg' | 'icon';
   customButtonClass?: string;
   onScheduleSuccess?: (data: any) => void;
+  children?: React.ReactNode; // Added this line to accept children
 }
 
 const ScheduleModal: React.FC<ScheduleModalProps> = ({
@@ -42,7 +43,8 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
   buttonVariant = 'default',
   buttonSize = 'sm',
   customButtonClass = '',
-  onScheduleSuccess
+  onScheduleSuccess,
+  children // Added this to the destructuring
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date>();
@@ -104,7 +106,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({
           size={buttonSize} 
           className={customButtonClass}
         >
-          {buttonText}
+          {children || buttonText}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
