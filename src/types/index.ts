@@ -80,3 +80,21 @@ export interface CalendarEvent {
   completed?: boolean;
   recurring?: 'daily' | 'weekly' | 'monthly' | 'none';
 }
+
+// Therapy Tools Types
+export type TherapyToolTypes = 'assessment' | 'visual' | 'motor' | 'communication' | 'behavioral' | 'social' | 'sensory' | 'cognitive';
+
+export interface TherapyTool {
+  id: string;
+  title: string;
+  description: string;
+  category: TherapyToolTypes;
+  ageRange: string;
+  fileType: string;
+  fileUrl?: string;
+  thumbnailUrl?: string;
+  tags: string[];
+  createdBy: 'system' | 'user';
+  createdAt: string;
+  favorited: boolean;
+}

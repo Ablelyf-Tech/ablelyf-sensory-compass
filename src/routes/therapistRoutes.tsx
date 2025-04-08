@@ -8,6 +8,7 @@ import Assessments from "@/pages/therapist/Assessments";
 import LearningModules from "@/pages/therapist/LearningModules";
 import Schedule from "@/pages/therapist/Schedule";
 import DiagnosticTools from "@/pages/therapist/DiagnosticTools";
+import TherapyTools from "@/pages/therapist/TherapyTools";
 
 export const therapistRoutes = [
   <Route 
@@ -53,6 +54,18 @@ export const therapistRoutes = [
       <ProtectedRoute>
         <AppLayout>
           <DiagnosticTools />
+        </AppLayout>
+      </ProtectedRoute>
+    } 
+  />,
+  
+  <Route 
+    key="therapy-tools"
+    path="/therapy-tools" 
+    element={
+      <ProtectedRoute>
+        <AppLayout>
+          <TherapyTools />
         </AppLayout>
       </ProtectedRoute>
     } 
