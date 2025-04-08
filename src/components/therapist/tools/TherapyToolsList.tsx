@@ -34,6 +34,7 @@ export const TherapyToolsList: React.FC<TherapyToolsListProps> = ({
 
   const downloadTool = (id: string) => {
     console.log(`Downloading tool: ${id}`);
+    alert(`Starting download for therapy tool`);
     // Implementation would handle the download
   };
 

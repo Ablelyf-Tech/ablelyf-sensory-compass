@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TherapyToolTypes } from '@/types';
 import { Brain, Activity, Eye, Move, MessageCircle, Smile, Hand, Lightbulb } from 'lucide-react';
+import { getTherapyTools } from '@/data/therapyToolsData';
 
 interface CategoryItem {
   id: TherapyToolTypes | 'all';
@@ -21,69 +22,77 @@ export const TherapyToolsCategories: React.FC<TherapyToolsCategoriesProps> = ({
   activeCategory, 
   onCategoryChange 
 }) => {
+  const tools = getTherapyTools();
+  const getCategoryCount = (category: TherapyToolTypes | 'all') => {
+    if (category === 'all') {
+      return tools.length;
+    }
+    return tools.filter(tool => tool.category === category).length;
+  };
+
   const categories: CategoryItem[] = [
     { 
       id: 'all', 
       name: 'All Tools', 
       description: 'View all therapeutic tools and resources',
       icon: Brain, 
-      count: 204 
+      count: getCategoryCount('all')
     },
     { 
       id: 'assessment', 
       name: 'Assessment Tools', 
       description: 'Evaluation and screening tools',
       icon: Activity, 
-      count: 24 
+      count: getCategoryCount('assessment')
     },
     { 
       id: 'visual', 
       name: 'Visual Supports', 
       description: 'Visual schedules and communication aids',
       icon: Eye, 
-      count: 38 
+      count: getCategoryCount('visual')
     },
     { 
       id: 'motor', 
       name: 'Motor Skills', 
       description: 'Fine and gross motor activities',
       icon: Move, 
-      count: 31 
+      count: getCategoryCount('motor')
     },
     { 
       id: 'communication', 
       name: 'Communication', 
       description: 'Speech and language development resources',
       icon: MessageCircle, 
-      count: 29 
+      count: getCategoryCount('communication')
     },
     { 
       id: 'behavioral', 
       name: 'Behavioral', 
       description: 'Behavior management strategies',
       icon: Hand, 
-      count: 22 
+      count: getCategoryCount('behavioral')
     },
     { 
       id: 'social', 
       name: 'Social Skills', 
       description: 'Social interaction and emotional learning',
       icon: Smile, 
-      count: 26 
+      count: getCategoryCount('social')
     },
     { 
       id: 'sensory', 
       name: 'Sensory Processing', 
       description: 'Sensory integration activities',
       icon: Brain, 
-      count: 18 
+      count: getCategoryCount('sensory')
     },
     { 
       id: 'cognitive', 
       name: 'Cognitive Skills', 
       description: 'Problem-solving and executive function',
       icon: Lightbulb, 
-      count: 16 
+      count: getCategoryCount('cognitive')
     },
   ];
 

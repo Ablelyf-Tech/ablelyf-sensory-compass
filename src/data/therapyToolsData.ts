@@ -1,4 +1,3 @@
-
 import { TherapyTool } from '@/types';
 
 // Function to get all therapy tools
@@ -8,15 +7,108 @@ export const getTherapyTools = (): TherapyTool[] => {
     {
       id: 'a1',
       title: 'Sensory Processing Assessment',
-      description: 'Comprehensive assessment tool for identifying sensory processing patterns in children with sensory integration difficulties.',
+      description: 'Comprehensive assessment tool for evaluating sensory processing patterns in children.',
       category: 'assessment',
       ageRange: '3-12',
       fileType: 'PDF',
-      tags: ['sensory', 'screening', 'questionnaire'],
+      tags: ['sensory', 'assessment', 'evaluation'],
       createdBy: 'system',
-      createdAt: '2024-02-15',
-      favorited: true
+      createdAt: '2024-04-08',
+      favorited: false
     },
+    // Visual Supports
+    {
+      id: 'v1',
+      title: 'Visual Schedule Cards',
+      description: 'Printable visual schedule cards for establishing routines and transitions.',
+      category: 'visual',
+      ageRange: '2-10',
+      fileType: 'PDF',
+      tags: ['schedule', 'routine', 'transitions'],
+      createdBy: 'system',
+      createdAt: '2024-04-08',
+      favorited: false
+    },
+    // Motor Skills
+    {
+      id: 'm1',
+      title: 'Fine Motor Skills Activities',
+      description: 'Collection of activities designed to improve fine motor skills and dexterity.',
+      category: 'motor',
+      ageRange: '3-8',
+      fileType: 'PDF',
+      tags: ['fine motor', 'dexterity', 'hand strength'],
+      createdBy: 'system',
+      createdAt: '2024-04-08',
+      favorited: false
+    },
+    // Communication
+    {
+      id: 'c1',
+      title: 'Communication Boards',
+      description: 'Customizable communication boards for non-verbal or limited verbal children.',
+      category: 'communication',
+      ageRange: '2-15',
+      fileType: 'PDF',
+      tags: ['AAC', 'non-verbal', 'communication'],
+      createdBy: 'system',
+      createdAt: '2024-04-08',
+      favorited: false
+    },
+    // Behavioral
+    {
+      id: 'b1',
+      title: 'Emotional Regulation Cards',
+      description: 'Cards to help children identify and regulate their emotions.',
+      category: 'behavioral',
+      ageRange: '4-12',
+      fileType: 'PDF',
+      tags: ['emotions', 'self-regulation', 'coping strategies'],
+      createdBy: 'system',
+      createdAt: '2024-04-08',
+      favorited: false
+    },
+    // Social Skills
+    {
+      id: 's1',
+      title: 'Social Stories Templates',
+      description: 'Templates for creating social stories to help children understand social situations.',
+      category: 'social',
+      ageRange: '3-12',
+      fileType: 'Word',
+      tags: ['social stories', 'social situations', 'understanding'],
+      createdBy: 'system',
+      createdAt: '2024-04-08',
+      favorited: false
+    },
+    // Sensory Processing
+    {
+      id: 'sp1',
+      title: 'Sensory Diet Planning Guide',
+      description: 'Guide for planning appropriate sensory activities throughout the day.',
+      category: 'sensory',
+      ageRange: '2-18',
+      fileType: 'PDF',
+      tags: ['sensory diet', 'sensory activities', 'planning'],
+      createdBy: 'system',
+      createdAt: '2024-04-08',
+      favorited: false
+    },
+    // Cognitive Skills
+    {
+      id: 'cg1',
+      title: 'Executive Function Activities',
+      description: 'Activities to strengthen planning, organization, and impulse control.',
+      category: 'cognitive',
+      ageRange: '5-18',
+      fileType: 'PDF',
+      tags: ['executive function', 'planning', 'organization'],
+      createdBy: 'system',
+      createdAt: '2024-04-08',
+      favorited: false
+    },
+    // Keep the rest of the existing tools
+    // ... keep existing code (remaining therapy tools data)
     {
       id: 'a2',
       title: 'Motor Skills Evaluation',
@@ -56,18 +148,6 @@ export const getTherapyTools = (): TherapyTool[] => {
     
     // Visual Supports
     {
-      id: 'v1',
-      title: 'Visual Schedule Cards',
-      description: 'Printable visual schedule cards for establishing routines and supporting transitions.',
-      category: 'visual',
-      ageRange: '2-12',
-      fileType: 'PDF',
-      tags: ['schedule', 'routine', 'transitions'],
-      createdBy: 'system',
-      createdAt: '2024-01-15',
-      favorited: true
-    },
-    {
       id: 'v2',
       title: 'Emotion Picture Cards',
       description: 'Visual cards depicting various emotions to help children identify and express feelings.',
@@ -106,18 +186,6 @@ export const getTherapyTools = (): TherapyTool[] => {
     
     // Motor Skills
     {
-      id: 'm1',
-      title: 'Fine Motor Activity Pack',
-      description: 'Collection of printable activities designed to improve fine motor skills and dexterity.',
-      category: 'motor',
-      ageRange: '3-8',
-      fileType: 'PDF',
-      tags: ['fine motor', 'dexterity', 'hand strength'],
-      createdBy: 'system',
-      createdAt: '2024-02-05',
-      favorited: false
-    },
-    {
       id: 'm2',
       title: 'Gross Motor Movement Cards',
       description: 'Movement activity cards for developing coordination, balance, and body awareness.',
@@ -143,18 +211,6 @@ export const getTherapyTools = (): TherapyTool[] => {
     },
     
     // Communication
-    {
-      id: 'c1',
-      title: 'Communication Boards',
-      description: 'Customizable communication boards for non-verbal or limited verbal children.',
-      category: 'communication',
-      ageRange: '2-16',
-      fileType: 'PDF',
-      tags: ['AAC', 'non-verbal', 'communication'],
-      createdBy: 'system',
-      createdAt: '2024-01-10',
-      favorited: true
-    },
     {
       id: 'c2',
       title: 'Speech Sound Cards',
@@ -182,18 +238,6 @@ export const getTherapyTools = (): TherapyTool[] => {
     
     // Behavioral
     {
-      id: 'b1',
-      title: 'Emotional Regulation Cards',
-      description: 'Cards to help children identify and regulate their emotions in various situations.',
-      category: 'behavioral',
-      ageRange: '4-12',
-      fileType: 'PDF',
-      tags: ['emotions', 'self-regulation', 'coping strategies'],
-      createdBy: 'system',
-      createdAt: '2024-01-22',
-      favorited: true
-    },
-    {
       id: 'b2',
       title: 'Behavior Management System',
       description: 'Comprehensive token economy system for positive behavior reinforcement.',
@@ -219,18 +263,6 @@ export const getTherapyTools = (): TherapyTool[] => {
     },
     
     // Social Skills
-    {
-      id: 's1',
-      title: 'Social Skills Activity Cards',
-      description: 'Activities for practicing various social skills in structured settings.',
-      category: 'social',
-      ageRange: '5-14',
-      fileType: 'PDF',
-      tags: ['social skills', 'friendship', 'interaction'],
-      createdBy: 'system',
-      createdAt: '2024-01-18',
-      favorited: false
-    },
     {
       id: 's2',
       title: 'Perspective Taking Scenarios',
@@ -258,18 +290,6 @@ export const getTherapyTools = (): TherapyTool[] => {
     
     // Sensory Processing
     {
-      id: 'sp1',
-      title: 'Sensory Diet Planning Guide',
-      description: 'Guide for planning appropriate sensory activities throughout the day.',
-      category: 'sensory',
-      ageRange: '3-18',
-      fileType: 'PDF',
-      tags: ['sensory diet', 'sensory integration', 'self-regulation'],
-      createdBy: 'system',
-      createdAt: '2024-01-12',
-      favorited: true
-    },
-    {
       id: 'sp2',
       title: 'Sensory Activity Cards',
       description: 'Activities targeting different sensory systems for sensory integration.',
@@ -295,18 +315,6 @@ export const getTherapyTools = (): TherapyTool[] => {
     },
     
     // Cognitive Skills
-    {
-      id: 'cg1',
-      title: 'Executive Function Activities',
-      description: 'Activities to strengthen planning, organization, and impulse control skills.',
-      category: 'cognitive',
-      ageRange: '5-18',
-      fileType: 'PDF',
-      tags: ['executive function', 'planning', 'organization'],
-      createdBy: 'system',
-      createdAt: '2024-01-28',
-      favorited: false
-    },
     {
       id: 'cg2',
       title: 'Problem Solving Worksheets',
