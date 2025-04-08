@@ -1,187 +1,111 @@
 
-import React, { useState } from 'react';
-import { AppLayout } from '@/components/layout/AppLayout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { User, Plus, Search, Edit, MoreVertical } from 'lucide-react';
-import { patients } from '@/data/mockData';
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { useToast } from '@/hooks/use-toast';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import ScheduleModal from '@/components/therapist/ScheduleModal';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { patients } from '@/data/mockData';
+import { Search, Filter, Plus, User, Calendar, FileText, MoreHorizontal } from 'lucide-react';
+import { PatientIntakeForm } from '@/components/therapist/PatientIntakeForm';
 
 const Patients: React.FC = () => {
-  const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
   const navigate = useNavigate();
-
+  const [searchTerm, setSearchTerm] = React.useState('');
+  
   const filteredPatients = patients.filter(patient => 
-    patient.name.toLowerCase().includes(searchQuery.toLowerCase())
+    patient.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const handlePatientAction = (action: string, patientName: string, patientId?: string) => {
-    switch (action) {
-      case 'View':
-        toast({
-          title: "Viewing patient details",
-          description: `Viewing details for ${patientName}`,
-        });
-        break;
-      case 'Edit':
-        toast({
-          title: "Edit patient profile",
-          description: `Editing profile for ${patientName}`,
-        });
-        break;
-      case 'Schedule':
-        // Schedule is now handled by the ScheduleModal component
-        break;
-      case 'CreatePlan':
-        navigate('/therapy-plans');
-        toast({
-          title: "Create therapy plan",
-          description: `Creating a new plan for ${patientName}`,
-        });
-        break;
-      default:
-        toast({
-          title: `${action} patient`,
-          description: `${action} ${patientName} selected`,
-        });
-    }
-  };
-
-  const handleAddPatient = () => {
-    toast({
-      title: "Add Patient",
-      description: "Opening new patient form",
-    });
-    // In a real app, this would open a form or navigate to an add patient page
+  
+  const handleViewProfile = (patientId: string) => {
+    console.log(`Viewing patient profile: ${patientId}`);
+    // Navigating to a specific patient profile is not implemented yet
+    // navigate(`/patients/${patientId}`);
   };
 
   return (
     <AppLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Patients</h1>
-            <p className="text-muted-foreground">Manage your patient profiles and therapy plans</p>
-          </div>
-          <Button className="flex items-center gap-2" onClick={handleAddPatient}>
-            <Plus size={16} />
-            <span>Add Patient</span>
-          </Button>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-ablelyf-blue-900">Patients</h1>
+          <p className="text-muted-foreground">Manage your patient caseload</p>
         </div>
-
-        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-          <div className="relative w-full md:w-auto md:flex-1 max-w-sm">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search patients..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
-            <TabsList>
-              <TabsTrigger value="all">All Patients</TabsTrigger>
-              <TabsTrigger value="active">Active</TabsTrigger>
-              <TabsTrigger value="pending">New Referrals</TabsTrigger>
-            </TabsList>
-          </Tabs>
+        <PatientIntakeForm />
+      </div>
+      
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input 
+            placeholder="Search patients..." 
+            className="pl-10"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPatients.map((patient) => (
-            <Card key={patient.id} className="overflow-hidden">
-              <CardHeader className="pb-2 pt-4 px-4 flex flex-row items-start justify-between space-y-0">
-                <div className="flex gap-3 items-center">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={`https://avatar.vercel.sh/${patient.id}`} alt={patient.name} />
-                    <AvatarFallback>
-                      <User size={18} />
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <CardTitle className="text-lg">{patient.name}</CardTitle>
-                    <p className="text-sm text-muted-foreground">Age: {patient.age}</p>
-                  </div>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <MoreVertical size={16} />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => handlePatientAction('View', patient.name)}>
-                      View Details
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handlePatientAction('Edit', patient.name)}>
-                      Edit Profile
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <ScheduleModal 
-                        patientName={patient.name} 
-                        patientId={patient.id}
-                        buttonText="Schedule Session"
-                        buttonVariant="ghost"
-                        customButtonClass="w-full justify-start"
-                      />
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </CardHeader>
-              <CardContent className="p-4">
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <div>
-                        <p className="text-muted-foreground">Diagnosis:</p>
-                        <p className="font-medium">{patient.condition?.join(', ') || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <p className="text-muted-foreground">Since:</p>
-                        <p className="font-medium">{patient.diagnosisDate || 'N/A'}</p>
-                      </div>
+        <Button variant="outline" className="sm:w-auto">
+          <Filter className="mr-2 h-4 w-4" />
+          Filter
+        </Button>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {filteredPatients.map((patient) => (
+          <Card key={patient.id} className="border border-border">
+            <CardContent className="p-0">
+              <div className="p-6 border-b">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-ablelyf-blue-100 text-ablelyf-blue-600 h-12 w-12 rounded-full flex items-center justify-center font-semibold text-lg">
+                      {patient.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-lg">{patient.name}</h3>
+                      <p className="text-sm text-muted-foreground">Age: {patient.age}</p>
                     </div>
                   </div>
-                  <div className="flex justify-between pt-2">
-                    <ScheduleModal 
-                      patientName={patient.name} 
-                      patientId={patient.id}
-                      buttonText="Schedule"
-                      buttonVariant="outline"
-                      buttonSize="sm"
-                      customButtonClass="text-xs"
-                    />
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="text-xs"
-                      onClick={() => handlePatientAction('CreatePlan', patient.name, patient.id)}
-                    >
-                      <Edit size={14} className="mr-1" />
-                      Create Plan
-                    </Button>
+                  <Badge className={
+                    patient.condition && patient.condition[0] === 'Autism Spectrum Disorder' 
+                      ? 'bg-blue-100 text-blue-800 border-blue-200' 
+                      : patient.condition && patient.condition[0] === 'ADHD'
+                      ? 'bg-orange-100 text-orange-800 border-orange-200'
+                      : 'bg-emerald-100 text-emerald-800 border-emerald-200'
+                  }>
+                    {patient.condition && patient.condition[0]}
+                  </Badge>
+                </div>
+              </div>
+              
+              <div className="p-6">
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm">
+                    <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span>Last session: 5 days ago</span>
+                  </div>
+                  <div className="flex items-center text-sm">
+                    <FileText className="h-4 w-4 mr-2 text-muted-foreground" />
+                    <span>Active therapy goals: 3</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                
+                <div className="flex items-center justify-between mt-6">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => handleViewProfile(patient.id)}
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    View Profile
+                  </Button>
+                  <Button variant="ghost" size="sm">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </AppLayout>
   );

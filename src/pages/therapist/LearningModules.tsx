@@ -1,337 +1,240 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Brain, Search, Plus, Clock, BookOpen, Users, Share2, Play, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToast } from '@/hooks/use-toast';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogHeader, 
-  DialogTitle 
-} from '@/components/ui/dialog';
+import { Book, Search, Filter, Users, Clock, ArrowRight, BookOpen } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { LearningModuleForm } from '@/components/therapist/LearningModuleForm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 // Mock learning modules data
-const learningModules = [
+const mockModules = [
   {
     id: 'm1',
-    title: 'Sensory Integration Techniques',
-    category: 'sensory',
-    level: 'intermediate',
-    duration: 45,
-    rating: 4.8,
-    enrollments: 87,
-    tags: ['sensory', 'practical', 'techniques'],
-    description: 'Learn evidence-based techniques for supporting sensory integration in various environments.'
+    title: 'Social Communication Basics',
+    description: 'Foundational skills for effective social communication',
+    skillArea: 'communication',
+    ageRange: '5-12',
+    activitiesCount: 5,
+    featured: true,
+    suitableFor: ['autism', 'developmental'],
+    createdBy: 'system'
   },
   {
     id: 'm2',
-    title: 'Communication Strategies for Non-verbal Children',
-    category: 'communication',
-    level: 'beginner',
-    duration: 60,
-    rating: 4.9,
-    enrollments: 124,
-    tags: ['communication', 'non-verbal', 'strategies'],
-    description: 'Effective strategies to facilitate communication with non-verbal and minimally verbal children.'
+    title: 'Sensory Regulation Toolkit',
+    description: 'Strategies for managing sensory sensitivities',
+    skillArea: 'sensory',
+    ageRange: '3-10',
+    activitiesCount: 4,
+    featured: true,
+    suitableFor: ['sensory', 'autism'],
+    createdBy: 'system'
   },
   {
     id: 'm3',
-    title: 'Advanced Behavioral Analysis Techniques',
-    category: 'behavioral',
-    level: 'advanced',
-    duration: 90,
-    rating: 4.6,
-    enrollments: 63,
-    tags: ['behavioral', 'analysis', 'techniques'],
-    description: 'Advanced techniques for behavioral analysis and intervention planning.'
+    title: 'Executive Function Skills',
+    description: 'Activities to improve planning and organization',
+    skillArea: 'cognitive',
+    ageRange: '7-14',
+    activitiesCount: 6,
+    featured: false,
+    suitableFor: ['adhd', 'learning'],
+    createdBy: 'system'
   },
   {
     id: 'm4',
-    title: 'Social Skills Development',
-    category: 'social',
-    level: 'intermediate',
-    duration: 75,
-    rating: 4.7,
-    enrollments: 95,
-    tags: ['social', 'skills', 'development'],
-    description: 'Structured approaches to developing and enhancing social skills through interactive activities.'
+    title: 'Emotional Regulation',
+    description: 'Techniques for identifying and managing emotions',
+    skillArea: 'emotional',
+    ageRange: '4-12',
+    activitiesCount: 7,
+    featured: false,
+    suitableFor: ['autism', 'adhd', 'emotional'],
+    createdBy: 'system'
   },
   {
     id: 'm5',
-    title: 'Assistive Technology: Assessment and Implementation',
-    category: 'technology',
-    level: 'intermediate',
-    duration: 60,
-    rating: 4.5,
-    enrollments: 72,
-    tags: ['assistive tech', 'implementation', 'assessment'],
-    description: 'Learn how to assess needs and implement assistive technology solutions effectively.'
-  },
-  {
-    id: 'm6',
-    title: 'Building Emotional Regulation Skills',
-    category: 'emotional',
-    level: 'beginner',
-    duration: 45,
-    rating: 4.8,
-    enrollments: 108,
-    tags: ['emotional', 'regulation', 'skills'],
-    description: 'Strategies to help children develop emotional awareness and regulation skills.'
+    title: 'Fine Motor Skills Development',
+    description: 'Activities to improve hand-eye coordination and fine motor control',
+    skillArea: 'motor',
+    ageRange: '3-8',
+    activitiesCount: 5,
+    featured: false,
+    suitableFor: ['developmental', 'physical'],
+    createdBy: 'user'
   }
 ];
 
 const LearningModules: React.FC = () => {
-  const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [levelFilter, setLevelFilter] = useState('all');
-  const [selectedModule, setSelectedModule] = useState<typeof learningModules[0] | null>(null);
-  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
-
-  // Filter modules based on search, category and level
-  const filteredModules = learningModules.filter(module => {
-    const matchesSearch = 
-      module.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      module.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      module.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesCategory = categoryFilter === 'all' || module.category === categoryFilter;
-    const matchesLevel = levelFilter === 'all' || module.level === levelFilter;
-    return matchesSearch && matchesCategory && matchesLevel;
-  });
-
-  // Get level badge based on level
-  const getLevelBadge = (level: string) => {
-    switch (level) {
-      case 'beginner':
-        return <Badge className="bg-ablelyf-green-500">Beginner</Badge>;
-      case 'intermediate':
-        return <Badge className="bg-ablelyf-blue-500">Intermediate</Badge>;
-      case 'advanced':
-        return <Badge className="bg-ablelyf-neutral-700 text-white">Advanced</Badge>;
+  const [searchTerm, setSearchTerm] = React.useState('');
+  
+  // Filter modules based on search term
+  const filteredModules = mockModules.filter(module => 
+    module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    module.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  // Get system modules vs user created modules
+  const systemModules = filteredModules.filter(m => m.createdBy === 'system');
+  const userModules = filteredModules.filter(m => m.createdBy === 'user');
+  
+  // Get skill area badge color
+  const getSkillAreaColor = (skillArea: string) => {
+    switch (skillArea) {
+      case 'communication':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'sensory':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'cognitive':
+        return 'bg-amber-100 text-amber-800 border-amber-200';
+      case 'emotional':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'motor':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'adaptive':
+        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
       default:
-        return null;
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
-  // Handle module action
-  const handleModuleAction = (action: string, module: typeof learningModules[0]) => {
-    switch (action) {
-      case 'Share':
-        setSelectedModule(module);
-        setIsShareDialogOpen(true);
-        break;
-      case 'Start':
-        toast({
-          title: "Starting Module",
-          description: `Starting "${module.title}" learning module`,
-        });
-        break;
-      case 'Create':
-        toast({
-          title: "Create Module",
-          description: "Opening module creation form",
-        });
-        break;
-      default:
-        toast({
-          title: `${action} Module`,
-          description: `${action} "${module.title}" module`,
-        });
-    }
+  // Format skill area for display
+  const formatSkillArea = (skillArea: string) => {
+    return skillArea.charAt(0).toUpperCase() + skillArea.slice(1) + ' Skills';
   };
 
-  const handleShareModule = (moduleId: string, shareMethod: string) => {
-    const module = learningModules.find(m => m.id === moduleId);
-    if (!module) return;
-    
-    toast({
-      title: `Module Shared`,
-      description: `"${module.title}" shared via ${shareMethod}`,
-    });
-    
-    setIsShareDialogOpen(false);
-  };
+  const renderModuleList = (modules: typeof mockModules) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {modules.map(module => (
+        <Card key={module.id} className="border border-border h-full flex flex-col">
+          <CardHeader className="pb-2">
+            <div className="flex justify-between items-start">
+              <Badge className={getSkillAreaColor(module.skillArea)}>
+                {formatSkillArea(module.skillArea)}
+              </Badge>
+              {module.featured && (
+                <Badge variant="outline" className="bg-ablelyf-blue-100 text-ablelyf-blue-800 border-ablelyf-blue-200">
+                  Featured
+                </Badge>
+              )}
+            </div>
+            <CardTitle className="text-lg mt-2">{module.title}</CardTitle>
+            <p className="text-sm text-muted-foreground">{module.description}</p>
+          </CardHeader>
+          <CardContent className="flex flex-col flex-1 justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center">
+                  <Users className="h-4 w-4 mr-1 text-muted-foreground" />
+                  <span>Ages {module.ageRange}</span>
+                </div>
+                <div className="flex items-center">
+                  <BookOpen className="h-4 w-4 mr-1 text-muted-foreground" />
+                  <span>{module.activitiesCount} activities</span>
+                </div>
+              </div>
+              
+              <ScrollArea className="whitespace-nowrap pb-2">
+                <div className="flex gap-1">
+                  {module.suitableFor.map((condition, idx) => (
+                    <Badge key={idx} variant="outline" className="text-xs">
+                      {condition === 'autism' && 'Autism'}
+                      {condition === 'adhd' && 'ADHD'}
+                      {condition === 'sensory' && 'Sensory Processing'}
+                      {condition === 'developmental' && 'Developmental Delay'}
+                      {condition === 'learning' && 'Learning Disability'}
+                      {condition === 'physical' && 'Physical Disability'}
+                      {condition === 'emotional' && 'Emotional Regulation'}
+                    </Badge>
+                  ))}
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+            </div>
+            
+            <Button variant="outline" className="w-full mt-4">
+              <Book className="mr-2 h-4 w-4" />
+              View Module
+              <ArrowRight className="ml-auto h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
 
   return (
     <AppLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Learning Modules</h1>
-            <p className="text-muted-foreground">Professional development resources and training modules</p>
-          </div>
-          <Button 
-            className="flex items-center gap-2"
-            onClick={() => handleModuleAction('Create', {} as typeof learningModules[0])}
-          >
-            <Plus size={16} />
-            <span>Create Module</span>
-          </Button>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-ablelyf-blue-900">Learning Modules</h1>
+          <p className="text-muted-foreground">Educational content and therapy activities</p>
         </div>
-
-        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search modules..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-full md:w-52">
-              <SelectValue placeholder="Filter by category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="sensory">Sensory Integration</SelectItem>
-              <SelectItem value="communication">Communication</SelectItem>
-              <SelectItem value="behavioral">Behavioral</SelectItem>
-              <SelectItem value="social">Social Skills</SelectItem>
-              <SelectItem value="emotional">Emotional Regulation</SelectItem>
-              <SelectItem value="technology">Assistive Technology</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Select value={levelFilter} onValueChange={setLevelFilter}>
-            <SelectTrigger className="w-full md:w-40">
-              <SelectValue placeholder="Filter by level" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Levels</SelectItem>
-              <SelectItem value="beginner">Beginner</SelectItem>
-              <SelectItem value="intermediate">Intermediate</SelectItem>
-              <SelectItem value="advanced">Advanced</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredModules.map((module) => (
-            <Card key={module.id} className="overflow-hidden flex flex-col">
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start">
-                  <CardTitle className="text-lg">{module.title}</CardTitle>
-                  {getLevelBadge(module.level)}
-                </div>
-                <CardDescription className="flex items-center gap-2 mt-1">
-                  <Brain size={14} className="text-muted-foreground" />
-                  <span className="capitalize">{module.category}</span>
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="py-2 flex-1">
-                <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground">{module.description}</p>
-                  
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Clock size={14} className="text-muted-foreground" />
-                      <span>{module.duration} minutes</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Star size={14} className="text-amber-500" />
-                      <span>{module.rating} ({module.enrollments})</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {module.tags.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs capitalize">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-              <CardFooter className="pt-2 border-t flex justify-between">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="text-xs"
-                  onClick={() => handleModuleAction('Share', module)}
-                >
-                  <Share2 size={14} className="mr-1" />
-                  Share
-                </Button>
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="text-xs gap-1"
-                  onClick={() => handleModuleAction('Start', module)}
-                >
-                  <Play size={14} className="mr-1" />
-                  Start Learning
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        <LearningModuleForm />
       </div>
-
-      {/* Share Module Dialog */}
-      <Dialog open={isShareDialogOpen} onOpenChange={setIsShareDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Share Module</DialogTitle>
-            <DialogDescription>
-              Share this learning module with colleagues or patients
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4 space-y-4">
-            <p className="font-medium">{selectedModule?.title}</p>
-            <p className="text-sm text-muted-foreground">{selectedModule?.description}</p>
-            
-            <div className="space-y-2">
-              <p className="text-sm font-medium">Share via:</p>
-              <div className="grid grid-cols-2 gap-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => selectedModule && handleShareModule(selectedModule.id, 'Email')}
-                >
-                  Email
+      
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input 
+            placeholder="Search modules..." 
+            className="pl-10"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <Button variant="outline" className="sm:w-auto">
+          <Filter className="mr-2 h-4 w-4" />
+          Filter
+        </Button>
+      </div>
+      
+      <Tabs defaultValue="library" className="mb-6">
+        <TabsList>
+          <TabsTrigger value="library">
+            Module Library ({systemModules.length})
+          </TabsTrigger>
+          <TabsTrigger value="user">
+            My Modules ({userModules.length})
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="library" className="pt-6">
+          {systemModules.length > 0 ? (
+            renderModuleList(systemModules)
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <Book className="text-muted-foreground mb-4 h-12 w-12" />
+                <h3 className="text-xl font-medium">No Modules Found</h3>
+                <p className="text-muted-foreground">Try changing your search criteria.</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+        
+        <TabsContent value="user" className="pt-6">
+          {userModules.length > 0 ? (
+            renderModuleList(userModules)
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <Book className="text-muted-foreground mb-4 h-12 w-12" />
+                <h3 className="text-xl font-medium">No Custom Modules</h3>
+                <p className="text-muted-foreground">Create your own custom modules to see them here.</p>
+                <Button className="mt-4 bg-ablelyf-blue-500" onClick={() => document.querySelector('button:has(.LearningModuleForm)')?.click()}>
+                  <Book className="mr-2 h-4 w-4" />
+                  Create Module
                 </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => selectedModule && handleShareModule(selectedModule.id, 'SMS')}
-                >
-                  SMS
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => selectedModule && handleShareModule(selectedModule.id, 'Patient Portal')}
-                >
-                  Patient Portal
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => selectedModule && handleShareModule(selectedModule.id, 'Copy Link')}
-                >
-                  Copy Link
-                </Button>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </AppLayout>
   );
 };

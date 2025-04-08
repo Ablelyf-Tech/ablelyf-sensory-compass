@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare, Clock, Users, Paperclip, Send } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { SessionNotesForm } from '@/components/therapist/SessionNotesForm';
 
 const VideoSession: React.FC = () => {
   const { currentUser } = useAuth();
@@ -84,11 +85,14 @@ const VideoSession: React.FC = () => {
 
   return (
     <AppLayout>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-ablelyf-blue-900">Video Session</h1>
-        <p className="text-ablelyf-blue-700">
-          {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-ablelyf-blue-900">Video Session</h1>
+          <p className="text-ablelyf-blue-700">
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
+        </div>
+        {role === 'therapist' && <SessionNotesForm />}
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

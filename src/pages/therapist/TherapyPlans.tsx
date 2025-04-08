@@ -1,225 +1,183 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { FileText, Search, Plus, Calendar, Trophy, Users, CheckCircle2, CircleEllipsis, Clock } from 'lucide-react';
-import { therapyPlans, patients } from '@/data/mockData';
-import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { TherapyPlan } from '@/types';
 import { Progress } from '@/components/ui/progress';
-import { useToast } from '@/hooks/use-toast';
-import ScheduleModal from '@/components/therapist/ScheduleModal';
+import { Badge } from '@/components/ui/badge';
+import { therapyPlans, patients } from '@/data/mockData';
+import { FileText, Clock, ChevronRight } from 'lucide-react';
+import { TherapyPlanForm } from '@/components/therapist/TherapyPlanForm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const TherapyPlans: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [patientFilter, setPatientFilter] = useState('all');
-  const { toast } = useToast();
-
-  // Filter therapy plans based on search, status and patient
-  const filteredPlans = therapyPlans.filter(plan => {
-    const matchesSearch = plan.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || plan.status === statusFilter;
-    const matchesPatient = patientFilter === 'all' || plan.patientId === patientFilter;
-    return matchesSearch && matchesStatus && matchesPatient;
-  });
-
-  // Calculate overall progress for a therapy plan
-  const calculateOverallProgress = (plan: TherapyPlan) => {
-    if (plan.goals.length === 0) return 0;
-    const totalProgress = plan.goals.reduce((sum, goal) => sum + goal.progress, 0);
-    return Math.round(totalProgress / plan.goals.length);
-  };
-
-  // Get status badge based on status
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge className="bg-ablelyf-green-500">Active</Badge>;
-      case 'completed':
-        return <Badge className="bg-ablelyf-blue-500">Completed</Badge>;
-      case 'draft':
-        return <Badge variant="outline">Draft</Badge>;
-      default:
-        return null;
-    }
-  };
-
-  // Get patient name from patient ID
+  // Group plans by status
+  const activePlans = therapyPlans.filter(plan => plan.status === 'active');
+  const draftPlans = therapyPlans.filter(plan => plan.status === 'draft');
+  const completedPlans = therapyPlans.filter(plan => plan.status === 'completed');
+  
+  // Get patient name from ID
   const getPatientName = (patientId: string) => {
     const patient = patients.find(p => p.id === patientId);
     return patient ? patient.name : 'Unknown Patient';
   };
-
-  const handlePlanAction = (action: string, planId: string, planTitle: string) => {
-    toast({
-      title: `${action} Plan`,
-      description: `${action} therapy plan "${planTitle}"`,
-    });
+  
+  // Calculate overall progress for a plan
+  const calculateProgress = (planId: string) => {
+    const plan = therapyPlans.find(p => p.id === planId);
+    if (!plan) return 0;
+    
+    const totalGoals = plan.goals.length;
+    if (totalGoals === 0) return 0;
+    
+    const achievedGoals = plan.goals.filter(g => g.status === 'achieved').length;
+    const inProgressGoals = plan.goals.filter(g => g.status === 'in-progress').length;
+    
+    return Math.round((achievedGoals + (inProgressGoals * 0.5)) / totalGoals * 100);
   };
 
-  const handleCreatePlan = () => {
-    toast({
-      title: "Create Plan",
-      description: "Opening new therapy plan form",
-    });
-    // In a real app, this would open a form to create a new therapy plan
-  };
+  const renderPlanList = (plans: typeof therapyPlans) => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {plans.map(plan => (
+        <Card key={plan.id} className="border border-border">
+          <CardHeader className="pb-2">
+            <div className="flex justify-between">
+              <Badge className={
+                plan.status === 'active' 
+                  ? 'bg-green-100 text-green-800 border-green-200' 
+                  : plan.status === 'completed'
+                  ? 'bg-blue-100 text-blue-800 border-blue-200'
+                  : 'bg-amber-100 text-amber-800 border-amber-200'
+              }>
+                {plan.status.charAt(0).toUpperCase() + plan.status.slice(1)}
+              </Badge>
+              <div className="text-sm text-muted-foreground flex items-center">
+                <Clock className="mr-1 h-4 w-4" />
+                {new Date(plan.startDate).toLocaleDateString()}
+              </div>
+            </div>
+            <CardTitle className="text-xl">{plan.title}</CardTitle>
+            <div className="text-sm text-muted-foreground">
+              Patient: {getPatientName(plan.patientId)}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Overall Progress</span>
+                  <span className="font-medium">{calculateProgress(plan.id)}%</span>
+                </div>
+                <Progress value={calculateProgress(plan.id)} className="h-2" />
+              </div>
+              
+              <div>
+                <h4 className="text-sm font-medium mb-2">Goals ({plan.goals.length})</h4>
+                <div className="space-y-2">
+                  {plan.goals.slice(0, 2).map((goal, index) => (
+                    <div key={index} className="flex items-center justify-between bg-ablelyf-neutral-50 p-2 rounded-md text-sm">
+                      <div className="flex items-center">
+                        <div 
+                          className={`h-2 w-2 rounded-full mr-2 ${
+                            goal.status === 'achieved' 
+                              ? 'bg-green-500' 
+                              : goal.status === 'in-progress'
+                              ? 'bg-amber-500'
+                              : 'bg-gray-300'
+                          }`}
+                        />
+                        <span className="truncate max-w-[200px]">{goal.title}</span>
+                      </div>
+                      <Badge variant="outline" className="text-xs">
+                        {goal.progress}%
+                      </Badge>
+                    </div>
+                  ))}
+                  {plan.goals.length > 2 && (
+                    <div className="text-xs text-muted-foreground text-center">
+                      + {plan.goals.length - 2} more goals
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <Button variant="outline" className="w-full">
+                <FileText className="mr-2 h-4 w-4" />
+                View Full Plan
+                <ChevronRight className="ml-auto h-4 w-4" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
 
   return (
     <AppLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Therapy Plans</h1>
-            <p className="text-muted-foreground">Create and manage therapy plans for your patients</p>
-          </div>
-          <Button className="flex items-center gap-2" onClick={handleCreatePlan}>
-            <Plus size={16} />
-            <span>New Plan</span>
-          </Button>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-ablelyf-blue-900">Therapy Plans</h1>
+          <p className="text-muted-foreground">Create and manage patient therapy plans</p>
         </div>
-
-        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search plans..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <Select value={patientFilter} onValueChange={setPatientFilter}>
-            <SelectTrigger className="w-full md:w-52">
-              <SelectValue placeholder="Filter by patient" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Patients</SelectItem>
-              {patients.map((patient) => (
-                <SelectItem key={patient.id} value={patient.id}>
-                  {patient.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-40">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPlans.map((plan) => {
-            const progress = calculateOverallProgress(plan);
-            const patientName = getPatientName(plan.patientId);
-            
-            return (
-              <Card key={plan.id} className="overflow-hidden flex flex-col">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg">{plan.title}</CardTitle>
-                      <CardDescription>For {patientName}</CardDescription>
-                    </div>
-                    {getStatusBadge(plan.status)}
-                  </div>
-                </CardHeader>
-                <CardContent className="py-2 flex-1">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Overall Progress</span>
-                        <span className="font-medium">{progress}%</span>
-                      </div>
-                      <Progress value={progress} className="h-2" />
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-muted-foreground" />
-                        <span>Started: {new Date(plan.startDate).toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Trophy size={14} className="text-muted-foreground" />
-                        <span>{plan.goals.filter(g => g.status === 'achieved').length} goals achieved</span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">Top Goals:</p>
-                      <ul className="space-y-1">
-                        {plan.goals.slice(0, 2).map((goal) => (
-                          <li key={goal.id} className="flex items-start gap-2 text-sm">
-                            {goal.status === 'achieved' ? (
-                              <CheckCircle2 size={14} className="text-ablelyf-green-500 mt-0.5" />
-                            ) : goal.status === 'in-progress' ? (
-                              <CircleEllipsis size={14} className="text-ablelyf-blue-500 mt-0.5" />
-                            ) : (
-                              <Clock size={14} className="text-muted-foreground mt-0.5" />
-                            )}
-                            <span className="line-clamp-1">{goal.title}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="pt-2 border-t flex justify-between">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-xs"
-                    onClick={() => handlePlanAction('View Collaborators', plan.id, plan.title)}
-                  >
-                    <Users size={14} className="mr-1" />
-                    Collaborators
-                  </Button>
-                  <div className="flex gap-2">
-                    <ScheduleModal 
-                      patientName={patientName}
-                      patientId={plan.patientId}
-                      buttonText="Schedule"
-                      buttonVariant="outline"
-                      buttonSize="sm"
-                      customButtonClass="text-xs"
-                    />
-                    <Button
-                      variant="default"
-                      size="sm"
-                      className="text-xs"
-                      onClick={() => handlePlanAction('View Details', plan.id, plan.title)}
-                    >
-                      <FileText size={14} className="mr-1" />
-                      View Details
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            );
-          })}
-        </div>
+        <TherapyPlanForm />
       </div>
+      
+      <Tabs defaultValue="active" className="mb-6">
+        <TabsList>
+          <TabsTrigger value="active">
+            Active Plans ({activePlans.length})
+          </TabsTrigger>
+          <TabsTrigger value="draft">
+            Draft Plans ({draftPlans.length})
+          </TabsTrigger>
+          <TabsTrigger value="completed">
+            Completed Plans ({completedPlans.length})
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="active" className="pt-6">
+          {activePlans.length > 0 ? (
+            renderPlanList(activePlans)
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <FileText className="text-muted-foreground mb-4 h-12 w-12" />
+                <h3 className="text-xl font-medium">No Active Plans</h3>
+                <p className="text-muted-foreground">Create a new therapy plan to get started.</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+        
+        <TabsContent value="draft" className="pt-6">
+          {draftPlans.length > 0 ? (
+            renderPlanList(draftPlans)
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <FileText className="text-muted-foreground mb-4 h-12 w-12" />
+                <h3 className="text-xl font-medium">No Draft Plans</h3>
+                <p className="text-muted-foreground">No draft plans currently exist.</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+        
+        <TabsContent value="completed" className="pt-6">
+          {completedPlans.length > 0 ? (
+            renderPlanList(completedPlans)
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <FileText className="text-muted-foreground mb-4 h-12 w-12" />
+                <h3 className="text-xl font-medium">No Completed Plans</h3>
+                <p className="text-muted-foreground">Your completed plans will appear here.</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </AppLayout>
   );
 };

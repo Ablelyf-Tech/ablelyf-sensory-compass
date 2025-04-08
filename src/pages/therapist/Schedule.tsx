@@ -1,324 +1,220 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Calendar } from '@/components/ui/calendar';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar as CalendarIcon, Clock, User, Video, MessageSquare, FileText, MoreHorizontal } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useToast } from '@/hooks/use-toast';
+import { Calendar as CalendarIcon, Clock, User, Video, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { patients } from '@/data/mockData';
-import { useNavigate } from 'react-router-dom';
-import ScheduleModal from '@/components/therapist/ScheduleModal';
+import { ScheduleSessionForm } from '@/components/therapist/ScheduleSessionForm';
 
-// Mock scheduled sessions data
-const mockSessions = [
+// Mock calendar events data
+const mockEvents = [
   {
-    id: 's1',
+    id: 'e1',
     patientId: 'p1',
-    date: new Date(2025, 3, 10, 9, 0), // April 10, 2025, 9:00 AM
-    timeSlot: '09:00 AM',
+    title: 'Therapy Session',
+    date: new Date(2023, 3, 10, 10, 0),
     duration: 60,
-    sessionType: 'therapy',
-    notes: 'Focus on speech exercises and social interactions',
-    status: 'upcoming'
+    type: 'individual',
+    location: 'clinic'
   },
   {
-    id: 's2',
+    id: 'e2',
     patientId: 'p2',
-    date: new Date(2025, 3, 10, 11, 0), // April 10, 2025, 11:00 AM
-    timeSlot: '11:00 AM',
-    duration: 45,
-    sessionType: 'evaluation',
-    notes: 'Quarterly progress evaluation',
-    status: 'upcoming'
+    title: 'Initial Assessment',
+    date: new Date(2023, 3, 10, 13, 0),
+    duration: 90,
+    type: 'evaluation',
+    location: 'clinic'
   },
   {
-    id: 's3',
+    id: 'e3',
     patientId: 'p3',
-    date: new Date(2025, 3, 11, 10, 0), // April 11, 2025, 10:00 AM
-    timeSlot: '10:00 AM',
+    title: 'Group Session',
+    date: new Date(2023, 3, 11, 15, 0),
     duration: 60,
-    sessionType: 'initial',
-    notes: 'Initial assessment session',
-    status: 'upcoming'
+    type: 'group',
+    location: 'telehealth'
   },
   {
-    id: 's4',
-    patientId: 'p1',
-    date: new Date(2025, 3, 8, 14, 0), // April 8, 2025, 2:00 PM
-    timeSlot: '02:00 PM',
-    duration: 45,
-    sessionType: 'therapy',
-    notes: 'Continued work on communication skills',
-    status: 'completed'
-  },
-  {
-    id: 's5',
+    id: 'e4',
     patientId: 'p4',
-    date: new Date(2025, 3, 12, 13, 0), // April 12, 2025, 1:00 PM
-    timeSlot: '01:00 PM',
-    duration: 60,
-    sessionType: 'consultation',
-    notes: 'Parent consultation about home exercises',
-    status: 'upcoming'
+    title: 'Parent Consultation',
+    date: new Date(2023, 3, 12, 9, 0),
+    duration: 45,
+    type: 'consultation',
+    location: 'telehealth'
   }
 ];
 
 const Schedule: React.FC = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [activeTab, setActiveTab] = useState('upcoming');
-
-  // Get sessions based on selected date and active tab
-  const getFilteredSessions = () => {
-    let filtered = [...mockSessions];
-    
-    if (selectedDate) {
-      filtered = filtered.filter(session => 
-        session.date.getDate() === selectedDate.getDate() &&
-        session.date.getMonth() === selectedDate.getMonth() &&
-        session.date.getFullYear() === selectedDate.getFullYear()
-      );
-    }
-    
-    if (activeTab !== 'all') {
-      filtered = filtered.filter(session => session.status === activeTab);
-    }
-    
-    return filtered.sort((a, b) => a.date.getTime() - b.date.getTime());
-  };
+  const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(new Date());
   
-  const filteredSessions = getFilteredSessions();
-
-  // Get patient name from patient ID
+  // Get patient name from ID
   const getPatientName = (patientId: string) => {
     const patient = patients.find(p => p.id === patientId);
     return patient ? patient.name : 'Unknown Patient';
   };
-
-  const getSessionTypeLabel = (type: string) => {
-    switch (type) {
-      case 'therapy':
-        return 'Therapy Session';
-      case 'evaluation':
-        return 'Progress Evaluation';
-      case 'initial':
-        return 'Initial Assessment';
-      case 'consultation':
-        return 'Parent Consultation';
-      case 'followup':
-        return 'Follow-up Session';
+  
+  // Get events for selected date
+  const getEventsForDate = (date: Date | undefined) => {
+    if (!date) return [];
+    
+    return mockEvents.filter(event => 
+      event.date.getDate() === date.getDate() &&
+      event.date.getMonth() === date.getMonth() &&
+      event.date.getFullYear() === date.getFullYear()
+    ).sort((a, b) => a.date.getTime() - b.date.getTime());
+  };
+  
+  // Format time from Date object
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+  
+  // Get location icon and text
+  const getLocationInfo = (location: string) => {
+    switch (location) {
+      case 'clinic':
+        return { icon: <MapPin className="h-4 w-4" />, text: 'Clinic' };
+      case 'telehealth':
+        return { icon: <Video className="h-4 w-4" />, text: 'Virtual Session' };
+      case 'home':
+        return { icon: <MapPin className="h-4 w-4" />, text: "Patient's Home" };
+      case 'school':
+        return { icon: <MapPin className="h-4 w-4" />, text: 'School' };
       default:
-        return 'Session';
+        return { icon: <MapPin className="h-4 w-4" />, text: location };
     }
   };
-
-  const getSessionTypeColor = (type: string) => {
+  
+  // Get event type badge color
+  const getEventTypeColor = (type: string) => {
     switch (type) {
-      case 'therapy':
-        return 'bg-ablelyf-green-500';
+      case 'individual':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'group':
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'evaluation':
-        return 'bg-ablelyf-blue-500';
-      case 'initial':
-        return 'bg-purple-500';
+        return 'bg-purple-100 text-purple-800 border-purple-200';
       case 'consultation':
-        return 'bg-amber-500';
-      case 'followup':
-        return 'bg-cyan-500';
+        return 'bg-amber-100 text-amber-800 border-amber-200';
+      case 'training':
+        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+      case 'team':
+        return 'bg-red-100 text-red-800 border-red-200';
       default:
-        return 'bg-gray-500';
-    }
-  };
-
-  const handleSessionAction = (action: string, sessionId: string, patientName: string) => {
-    switch (action) {
-      case 'Start':
-        navigate('/video-session');
-        break;
-      case 'Reschedule':
-        toast({
-          title: "Reschedule Session",
-          description: `Rescheduling session for ${patientName}`,
-        });
-        break;
-      case 'Cancel':
-        toast({
-          title: "Cancel Session",
-          description: `Session for ${patientName} has been cancelled`,
-        });
-        break;
-      case 'Notes':
-        toast({
-          title: "Session Notes",
-          description: `Viewing notes for ${patientName}'s session`,
-        });
-        break;
-      default:
-        toast({
-          title: action,
-          description: `${action} for session with ${patientName}`,
-        });
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   return (
     <AppLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Therapy Schedule</h1>
-            <p className="text-muted-foreground">Manage and view all your scheduled therapy sessions</p>
-          </div>
-          <ScheduleModal 
-            buttonText="Schedule New Session"
-            customButtonClass="flex items-center gap-2"
-          >
-            <CalendarIcon size={16} className="mr-1" />
-            <span>Schedule New Session</span>
-          </ScheduleModal>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-ablelyf-blue-900">Schedule</h1>
+          <p className="text-muted-foreground">Manage your therapy sessions and appointments</p>
         </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle>Calendar</CardTitle>
-              <CardDescription>Select a date to view sessions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Calendar 
-                mode="single" 
-                selected={selectedDate} 
-                onSelect={setSelectedDate}
-                className="rounded-md border mx-auto"
-              />
-              <div className="mt-4 space-y-2">
-                <p className="text-sm font-medium">Session Types:</p>
-                <div className="flex flex-wrap gap-2">
-                  <Badge className="bg-ablelyf-green-500">Therapy</Badge>
-                  <Badge className="bg-ablelyf-blue-500">Evaluation</Badge>
-                  <Badge className="bg-purple-500">Assessment</Badge>
-                  <Badge className="bg-amber-500">Consultation</Badge>
-                  <Badge className="bg-cyan-500">Follow-up</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <div className="lg:col-span-2 space-y-5">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList>
-                <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-                <TabsTrigger value="completed">Completed</TabsTrigger>
-                <TabsTrigger value="all">All Sessions</TabsTrigger>
-              </TabsList>
-            </Tabs>
-            
-            {selectedDate && (
-              <h3 className="font-medium flex items-center gap-2">
-                <CalendarIcon size={16} />
-                Sessions for {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
-              </h3>
-            )}
-            
-            <div className="space-y-4">
-              {filteredSessions.length === 0 ? (
-                <Card>
-                  <CardContent className="p-6 text-center text-muted-foreground">
-                    No sessions scheduled for this date.
-                  </CardContent>
-                </Card>
+        <ScheduleSessionForm />
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="border border-border lg:col-span-1">
+          <CardContent className="p-0">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+              className="w-full"
+              initialFocus
+            />
+          </CardContent>
+        </Card>
+        
+        <Card className="border border-border lg:col-span-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center">
+              <CalendarIcon className="mr-2 h-5 w-5" />
+              {selectedDate ? (
+                <span>
+                  {selectedDate.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    month: 'long', 
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </span>
               ) : (
-                filteredSessions.map(session => {
-                  const patientName = getPatientName(session.patientId);
-                  
-                  return (
-                    <Card key={session.id} className="overflow-hidden">
-                      <CardContent className="p-0">
-                        <div className="flex flex-col sm:flex-row">
-                          <div className={`w-full sm:w-2 ${getSessionTypeColor(session.sessionType)} h-2 sm:h-auto`}></div>
-                          <div className="p-4 sm:p-5 w-full space-y-4">
-                            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                              <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                                  <Badge variant="outline" className={session.status === 'completed' ? 'text-muted-foreground' : ''}>
-                                    {session.timeSlot} ({session.duration} min)
-                                  </Badge>
-                                  <Badge className={getSessionTypeColor(session.sessionType)}>
-                                    {getSessionTypeLabel(session.sessionType)}
-                                  </Badge>
-                                </div>
-                                <h3 className="font-semibold text-lg flex items-center gap-2">
-                                  <User size={16} className="text-muted-foreground" />
-                                  {patientName}
-                                </h3>
-                              </div>
-                              <div className="flex gap-2 flex-wrap justify-end">
-                                {session.status === 'upcoming' && (
-                                  <Button 
-                                    variant="default" 
-                                    size="sm"
-                                    onClick={() => handleSessionAction('Start', session.id, patientName)}
-                                  >
-                                    <Video size={14} className="mr-1" />
-                                    Start Session
-                                  </Button>
-                                )}
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button variant="outline" size="sm">
-                                      <MoreHorizontal size={14} />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent align="end">
-                                    {session.status === 'upcoming' ? (
-                                      <>
-                                        <DropdownMenuItem onClick={() => handleSessionAction('Message', session.id, patientName)}>
-                                          <MessageSquare size={14} className="mr-2" />
-                                          Send Reminder
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => handleSessionAction('Reschedule', session.id, patientName)}>
-                                          <CalendarIcon size={14} className="mr-2" />
-                                          Reschedule
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => handleSessionAction('Cancel', session.id, patientName)}>
-                                          <Clock size={14} className="mr-2" />
-                                          Cancel Session
-                                        </DropdownMenuItem>
-                                      </>
-                                    ) : (
-                                      <DropdownMenuItem onClick={() => handleSessionAction('Notes', session.id, patientName)}>
-                                        <FileText size={14} className="mr-2" />
-                                        View Session Notes
-                                      </DropdownMenuItem>
-                                    )}
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
-                            </div>
-                            {session.notes && (
-                              <p className="text-sm text-muted-foreground">
-                                {session.notes}
-                              </p>
-                            )}
-                          </div>
+                <span>No Date Selected</span>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {getEventsForDate(selectedDate).length > 0 ? (
+                getEventsForDate(selectedDate).map(event => (
+                  <div key={event.id} className="flex flex-col space-y-2 border rounded-lg p-4">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-medium">{event.title}</h3>
+                        <div className="flex items-center text-sm text-muted-foreground mt-1">
+                          <User className="h-4 w-4 mr-1" />
+                          <span>{getPatientName(event.patientId)}</span>
                         </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })
+                      </div>
+                      <Badge className={getEventTypeColor(event.type)}>
+                        {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-2">
+                      <div className="flex items-center text-sm">
+                        <Clock className="h-4 w-4 mr-1 text-muted-foreground" />
+                        <span>
+                          {formatTime(event.date)} ({event.duration} min)
+                        </span>
+                      </div>
+                      <div className="flex items-center text-sm">
+                        {getLocationInfo(event.location).icon}
+                        <span className="ml-1">{getLocationInfo(event.location).text}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-2 pt-2">
+                      {event.location === 'telehealth' && (
+                        <Button size="sm" className="bg-ablelyf-blue-500">
+                          <Video className="mr-2 h-4 w-4" />
+                          Join Session
+                        </Button>
+                      )}
+                      <Button size="sm" variant="outline">View Details</Button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-12">
+                  <Clock className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium">No Sessions Scheduled</h3>
+                  <p className="text-muted-foreground mt-1">
+                    No appointments for {selectedDate?.toLocaleDateString('en-US', { 
+                      month: 'long', 
+                      day: 'numeric'
+                    })}
+                  </p>
+                  <Button 
+                    className="mt-4 bg-ablelyf-blue-500"
+                    onClick={() => document.querySelector('button:has(.ScheduleSessionForm)')?.click()}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    Schedule Session
+                  </Button>
+                </div>
               )}
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </AppLayout>
   );

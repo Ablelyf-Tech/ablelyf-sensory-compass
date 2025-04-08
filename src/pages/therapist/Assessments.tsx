@@ -1,307 +1,198 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Activity, Search, Plus, Calendar, ClipboardCheck, FileText, BarChart, User } from 'lucide-react';
-import { patients } from '@/data/mockData';
 import { Badge } from '@/components/ui/badge';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useToast } from '@/hooks/use-toast';
-import ScheduleModal from '@/components/therapist/ScheduleModal';
+import { ClipboardList, Filter, Calendar, User, FileText, ArrowRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { patients } from '@/data/mockData';
+import { AssessmentForm } from '@/components/therapist/AssessmentForm';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 // Mock assessment data
-const assessments = [
+const mockAssessments = [
   {
     id: 'a1',
-    title: 'Initial Cognitive Assessment',
     patientId: 'p1',
-    date: '2024-01-15',
-    type: 'cognitive',
-    status: 'completed',
-    score: 82,
-    description: 'Comprehensive initial assessment for cognitive function and development.'
+    type: 'initial',
+    date: '2023-04-01',
+    completed: true
   },
   {
     id: 'a2',
-    title: 'Sensory Processing Evaluation',
     patientId: 'p2',
-    date: '2024-02-05',
-    type: 'sensory',
-    status: 'completed',
-    score: 65,
-    description: 'Evaluation of sensory processing and integration abilities.'
+    type: 'quarterly',
+    date: '2023-04-05',
+    completed: true
   },
   {
     id: 'a3',
-    title: 'Social Skills Assessment',
     patientId: 'p3',
-    date: '2024-03-10',
-    type: 'social',
-    status: 'completed',
-    score: 70,
-    description: 'Assessment of social interaction skills and development.'
+    type: 'annual',
+    date: '2023-04-10',
+    completed: true
   },
   {
     id: 'a4',
-    title: 'Quarterly Progress Evaluation',
     patientId: 'p1',
-    date: '2024-04-15',
     type: 'progress',
-    status: 'scheduled',
-    description: 'Quarterly follow-up to measure progress against goals.'
+    date: '2023-07-15',
+    completed: true
   },
   {
     id: 'a5',
-    title: 'Communication Skills Assessment',
     patientId: 'p4',
-    date: '2024-03-20',
-    type: 'communication',
-    status: 'draft',
-    description: 'Evaluation of verbal and non-verbal communication abilities.'
-  },
-  {
-    id: 'a6',
-    title: 'Emotional Regulation Assessment',
-    patientId: 'p2',
-    date: '2024-04-10',
-    type: 'emotional',
-    status: 'scheduled',
-    description: 'Assessment of emotional awareness and regulation strategies.'
+    type: 'initial',
+    date: '2023-08-20',
+    completed: false
   }
 ];
 
 const Assessments: React.FC = () => {
-  const { toast } = useToast();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [typeFilter, setTypeFilter] = useState('all');
-
-  // Filter assessments based on search, status and type
-  const filteredAssessments = assessments.filter(assessment => {
-    const matchesSearch = assessment.title.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === 'all' || assessment.status === statusFilter;
-    const matchesType = typeFilter === 'all' || assessment.type === typeFilter;
-    return matchesSearch && matchesStatus && matchesType;
-  });
-
-  // Get status badge based on status
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return <Badge className="bg-ablelyf-green-500">Completed</Badge>;
-      case 'scheduled':
-        return <Badge className="bg-ablelyf-blue-500">Scheduled</Badge>;
-      case 'draft':
-        return <Badge variant="outline">Draft</Badge>;
-      default:
-        return null;
-    }
-  };
-
-  // Get patient name from patient ID
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const completedAssessments = mockAssessments.filter(a => a.completed);
+  const pendingAssessments = mockAssessments.filter(a => !a.completed);
+  
+  // Get patient name from ID
   const getPatientName = (patientId: string) => {
     const patient = patients.find(p => p.id === patientId);
     return patient ? patient.name : 'Unknown Patient';
   };
-
-  // Handle assessment action
-  const handleAssessmentAction = (action: string, assessmentId: string) => {
-    const assessment = assessments.find(a => a.id === assessmentId);
-    if (!assessment) return;
-    
-    const patientName = getPatientName(assessment.patientId);
-    
-    switch (action) {
-      case 'Edit':
-        toast({
-          title: "Edit Assessment",
-          description: `Editing ${assessment.title} for ${patientName}`,
-        });
-        break;
-      case 'Start':
-        toast({
-          title: "Start Assessment",
-          description: `Starting ${assessment.title} for ${patientName}`,
-        });
-        break;
-      case 'Report':
-        toast({
-          title: "Assessment Report",
-          description: `Viewing report for ${assessment.title}`,
-        });
-        break;
-      case 'View':
-        toast({
-          title: "View Assessment",
-          description: `Viewing details for ${assessment.title}`,
-        });
-        break;
-      default:
-        toast({
-          title: `${action} Assessment`,
-          description: `${action} assessment ID: ${assessmentId}`,
-        });
-    }
-  };
-
-  const handleNewAssessment = () => {
-    toast({
-      title: "New Assessment",
-      description: "Creating a new assessment",
-    });
+  
+  // Format assessment type for display
+  const formatAssessmentType = (type: string) => {
+    return type.charAt(0).toUpperCase() + type.slice(1) + ' Assessment';
   };
 
   return (
     <AppLayout>
-      <div className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Assessments</h1>
-            <p className="text-muted-foreground">Create, manage and track patient assessments</p>
-          </div>
-          <Button className="flex items-center gap-2" onClick={handleNewAssessment}>
-            <Plus size={16} />
-            <span>New Assessment</span>
-          </Button>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-ablelyf-blue-900">Assessments</h1>
+          <p className="text-muted-foreground">Manage patient assessments and evaluations</p>
         </div>
-
-        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center">
-          <div className="relative w-full md:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search assessments..."
-              className="pl-8"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full md:w-40">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="scheduled">Scheduled</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-full md:w-52">
-              <SelectValue placeholder="Filter by type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="cognitive">Cognitive</SelectItem>
-              <SelectItem value="sensory">Sensory Processing</SelectItem>
-              <SelectItem value="social">Social Skills</SelectItem>
-              <SelectItem value="communication">Communication</SelectItem>
-              <SelectItem value="emotional">Emotional Regulation</SelectItem>
-              <SelectItem value="progress">Progress Evaluation</SelectItem>
-            </SelectContent>
-          </Select>
+        <AssessmentForm />
+      </div>
+      
+      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Input 
+            placeholder="Search assessments..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
+        <Button variant="outline" className="sm:w-auto">
+          <Filter className="mr-2 h-4 w-4" />
+          Filter
+        </Button>
+      </div>
+      
+      <Tabs defaultValue="completed" className="mb-6">
+        <TabsList>
+          <TabsTrigger value="completed">
+            Completed ({completedAssessments.length})
+          </TabsTrigger>
+          <TabsTrigger value="pending">
+            Pending ({pendingAssessments.length})
+          </TabsTrigger>
+        </TabsList>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAssessments.map((assessment) => {
-            const patientName = getPatientName(assessment.patientId);
-            
-            return (
-              <Card key={assessment.id} className="overflow-hidden flex flex-col">
+        <TabsContent value="completed" className="pt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {completedAssessments.map(assessment => (
+              <Card key={assessment.id} className="border border-border">
                 <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <div className="space-y-1">
-                      <CardTitle className="text-lg">{assessment.title}</CardTitle>
-                      <div className="flex items-center gap-2">
-                        <User size={14} className="text-muted-foreground" />
-                        <CardDescription>{patientName}</CardDescription>
-                      </div>
+                  <div className="flex justify-between items-center mb-2">
+                    <Badge className="bg-green-100 text-green-800 border-green-200">
+                      Completed
+                    </Badge>
+                    <div className="text-sm text-muted-foreground flex items-center">
+                      <Calendar className="mr-1 h-4 w-4" />
+                      {new Date(assessment.date).toLocaleDateString()}
                     </div>
-                    {getStatusBadge(assessment.status)}
+                  </div>
+                  <CardTitle className="text-lg">
+                    {formatAssessmentType(assessment.type)}
+                  </CardTitle>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <User className="mr-1 h-4 w-4" />
+                    {getPatientName(assessment.patientId)}
                   </div>
                 </CardHeader>
-                <CardContent className="py-2 flex-1">
-                  <div className="space-y-4">
-                    <p className="text-sm text-muted-foreground">{assessment.description}</p>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                <CardContent>
+                  <div className="flex flex-col space-y-3">
+                    <div className="pt-3 space-y-2">
                       <div className="flex items-center gap-2">
-                        <Calendar size={14} className="text-muted-foreground" />
-                        <span>{new Date(assessment.date).toLocaleDateString()}</span>
+                        <div className="bg-ablelyf-blue-100 rounded-full p-1">
+                          <ClipboardList className="h-4 w-4 text-ablelyf-blue-800" />
+                        </div>
+                        <span className="text-sm">Sensory Processing Score: 7/10</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Activity size={14} className="text-muted-foreground" />
-                        <span className="capitalize">{assessment.type}</span>
+                        <div className="bg-ablelyf-green-100 rounded-full p-1">
+                          <ClipboardList className="h-4 w-4 text-ablelyf-green-800" />
+                        </div>
+                        <span className="text-sm">Communication Score: 6/10</span>
                       </div>
                     </div>
                     
-                    {assessment.score && (
-                      <div className="bg-ablelyf-neutral-100 p-3 rounded-md">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">Overall Score:</span>
-                          <span className="font-bold text-lg">{assessment.score}%</span>
-                        </div>
-                      </div>
-                    )}
+                    <Button variant="outline" className="w-full mt-3">
+                      <FileText className="mr-2 h-4 w-4" />
+                      View Assessment
+                      <ArrowRight className="ml-auto h-4 w-4" />
+                    </Button>
                   </div>
                 </CardContent>
-                <CardFooter className="pt-2 border-t flex justify-between">
-                  {assessment.status === 'draft' ? (
-                    <Button variant="ghost" size="sm" className="text-xs" onClick={() => handleAssessmentAction('Edit', assessment.id)}>
-                      <FileText size={14} className="mr-1" />
-                      Edit Draft
-                    </Button>
-                  ) : assessment.status === 'scheduled' ? (
-                    <Button variant="ghost" size="sm" className="text-xs" onClick={() => handleAssessmentAction('Start', assessment.id)}>
-                      <ClipboardCheck size={14} className="mr-1" />
-                      Start Assessment
-                    </Button>
-                  ) : (
-                    <Button variant="ghost" size="sm" className="text-xs" onClick={() => handleAssessmentAction('Report', assessment.id)}>
-                      <BarChart size={14} className="mr-1" />
-                      Analysis
-                    </Button>
-                  )}
-                  
-                  <div className="flex gap-2">
-                    {assessment.status !== 'draft' && (
-                      <ScheduleModal 
-                        patientName={patientName}
-                        patientId={assessment.patientId}
-                        buttonText="Schedule"
-                        buttonVariant="outline"
-                        buttonSize="sm"
-                        customButtonClass="text-xs"
-                      />
-                    )}
-                    <Button 
-                      variant="default" 
-                      size="sm" 
-                      className="text-xs" 
-                      onClick={() => handleAssessmentAction('View', assessment.id)}
-                    >
-                      <FileText size={14} className="mr-1" />
-                      View Details
-                    </Button>
-                  </div>
-                </CardFooter>
               </Card>
-            );
-          })}
-        </div>
-      </div>
+            ))}
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="pending" className="pt-6">
+          {pendingAssessments.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {pendingAssessments.map(assessment => (
+                <Card key={assessment.id} className="border border-border">
+                  <CardHeader className="pb-2">
+                    <div className="flex justify-between items-center mb-2">
+                      <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                        Pending
+                      </Badge>
+                      <div className="text-sm text-muted-foreground flex items-center">
+                        <Calendar className="mr-1 h-4 w-4" />
+                        {new Date(assessment.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <CardTitle className="text-lg">
+                      {formatAssessmentType(assessment.type)}
+                    </CardTitle>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <User className="mr-1 h-4 w-4" />
+                      {getPatientName(assessment.patientId)}
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <Button className="w-full mt-3 bg-ablelyf-blue-500">
+                      <ClipboardList className="mr-2 h-4 w-4" />
+                      Complete Assessment
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <ClipboardList className="text-muted-foreground mb-4 h-12 w-12" />
+                <h3 className="text-xl font-medium">No Pending Assessments</h3>
+                <p className="text-muted-foreground">All assessments have been completed.</p>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+      </Tabs>
     </AppLayout>
   );
 };
