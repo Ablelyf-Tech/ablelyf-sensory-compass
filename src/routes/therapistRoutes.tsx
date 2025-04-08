@@ -1,6 +1,7 @@
 
 import { Route } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
+import { AppLayout } from "@/components/layout/AppLayout";
 import Patients from "@/pages/therapist/Patients";
 import TherapyPlans from "@/pages/therapist/TherapyPlans";
 import Assessments from "@/pages/therapist/Assessments";
@@ -15,7 +16,9 @@ export const TherapistRoutes = () => {
         path="/patients" 
         element={
           <ProtectedRoute>
-            <Patients />
+            <AppLayout>
+              <Patients />
+            </AppLayout>
           </ProtectedRoute>
         } 
       />
@@ -24,7 +27,9 @@ export const TherapistRoutes = () => {
         path="/therapy-plans" 
         element={
           <ProtectedRoute>
-            <TherapyPlans />
+            <AppLayout>
+              <TherapyPlans />
+            </AppLayout>
           </ProtectedRoute>
         } 
       />
@@ -33,7 +38,9 @@ export const TherapistRoutes = () => {
         path="/assessments" 
         element={
           <ProtectedRoute>
-            <Assessments />
+            <AppLayout>
+              <Assessments />
+            </AppLayout>
           </ProtectedRoute>
         } 
       />
@@ -42,7 +49,9 @@ export const TherapistRoutes = () => {
         path="/diagnostic-tools" 
         element={
           <ProtectedRoute>
-            <DiagnosticTools />
+            <AppLayout>
+              <DiagnosticTools />
+            </AppLayout>
           </ProtectedRoute>
         } 
       />
@@ -51,7 +60,9 @@ export const TherapistRoutes = () => {
         path="/learning-modules" 
         element={
           <ProtectedRoute>
-            <LearningModules />
+            <AppLayout>
+              <LearningModules />
+            </AppLayout>
           </ProtectedRoute>
         } 
       />
@@ -60,7 +71,9 @@ export const TherapistRoutes = () => {
         path="/schedule" 
         element={
           <ProtectedRoute>
-            <Schedule />
+            <AppLayout>
+              <Schedule />
+            </AppLayout>
           </ProtectedRoute>
         } 
       />
