@@ -14,12 +14,10 @@ export const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       
       {/* Public routes (login, register) */}
-      <Route path="login" element={<PublicRoutes />} />
-      <Route path="register" element={<PublicRoutes />} />
+      <Route path="/*" element={<PublicRoutes />} />
       
       {/* Shared routes for all authenticated users */}
       <Route path="dashboard/*" element={<SharedRoutes />} />
-      <Route path="video-session/*" element={<SharedRoutes />} />
       
       {/* Role-specific routes */}
       <Route path="patients/*" element={<TherapistRoutes />} />

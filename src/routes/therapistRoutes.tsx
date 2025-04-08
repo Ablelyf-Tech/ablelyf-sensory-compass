@@ -20,7 +20,7 @@ export const TherapistRoutes = () => {
       />
       
       <Route 
-        path="/" 
+        path="/therapy-plans" 
         element={
           <ProtectedRoute>
             <TherapyPlans />
@@ -29,7 +29,7 @@ export const TherapistRoutes = () => {
       />
       
       <Route 
-        path="/" 
+        path="/assessments" 
         element={
           <ProtectedRoute>
             <Assessments />
@@ -38,7 +38,7 @@ export const TherapistRoutes = () => {
       />
       
       <Route 
-        path="/" 
+        path="/learning-modules" 
         element={
           <ProtectedRoute>
             <LearningModules />
@@ -47,7 +47,7 @@ export const TherapistRoutes = () => {
       />
       
       <Route 
-        path="/" 
+        path="/schedule" 
         element={
           <ProtectedRoute>
             <Schedule />

@@ -19,7 +19,7 @@ export const TeacherRoutes = () => {
       />
       
       <Route 
-        path="/" 
+        path="/progress" 
         element={
           <ProtectedRoute>
             <ProgressReports />
@@ -28,7 +28,7 @@ export const TeacherRoutes = () => {
       />
       
       <Route 
-        path="/" 
+        path="/materials" 
         element={
           <ProtectedRoute>
             <Materials />
@@ -37,7 +37,7 @@ export const TeacherRoutes = () => {
       />
       
       <Route 
-        path="/" 
+        path="/calendar" 
         element={
           <ProtectedRoute>
             <TeacherCalendar />

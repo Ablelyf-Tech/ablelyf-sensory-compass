@@ -18,7 +18,7 @@ export const SharedRoutes = () => {
       />
       
       <Route 
-        path="/" 
+        path="/video-session" 
         element={
           <ProtectedRoute>
             <VideoSession />
