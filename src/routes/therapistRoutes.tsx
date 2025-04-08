@@ -8,76 +8,77 @@ import Assessments from "@/pages/therapist/Assessments";
 import LearningModules from "@/pages/therapist/LearningModules";
 import Schedule from "@/pages/therapist/Schedule";
 import DiagnosticTools from "@/pages/therapist/DiagnosticTools";
-import { Fragment } from "react";
 
-export const TherapistRoutes = () => {
-  return (
-    <Fragment>
-      <Route 
-        path="/patients" 
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <Patients />
-            </AppLayout>
-          </ProtectedRoute>
-        } 
-      />
-      
-      <Route 
-        path="/therapy-plans" 
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <TherapyPlans />
-            </AppLayout>
-          </ProtectedRoute>
-        } 
-      />
-      
-      <Route 
-        path="/assessments" 
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <Assessments />
-            </AppLayout>
-          </ProtectedRoute>
-        } 
-      />
-      
-      <Route 
-        path="/diagnostic-tools" 
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <DiagnosticTools />
-            </AppLayout>
-          </ProtectedRoute>
-        } 
-      />
-      
-      <Route 
-        path="/learning-modules" 
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <LearningModules />
-            </AppLayout>
-          </ProtectedRoute>
-        } 
-      />
-      
-      <Route 
-        path="/schedule" 
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <Schedule />
-            </AppLayout>
-          </ProtectedRoute>
-        } 
-      />
-    </Fragment>
-  );
-};
+export const therapistRoutes = [
+  <Route 
+    key="patients"
+    path="/patients" 
+    element={
+      <ProtectedRoute>
+        <AppLayout>
+          <Patients />
+        </AppLayout>
+      </ProtectedRoute>
+    } 
+  />,
+  
+  <Route 
+    key="therapy-plans"
+    path="/therapy-plans" 
+    element={
+      <ProtectedRoute>
+        <AppLayout>
+          <TherapyPlans />
+        </AppLayout>
+      </ProtectedRoute>
+    } 
+  />,
+  
+  <Route 
+    key="assessments"
+    path="/assessments" 
+    element={
+      <ProtectedRoute>
+        <AppLayout>
+          <Assessments />
+        </AppLayout>
+      </ProtectedRoute>
+    } 
+  />,
+  
+  <Route 
+    key="diagnostic-tools"
+    path="/diagnostic-tools" 
+    element={
+      <ProtectedRoute>
+        <AppLayout>
+          <DiagnosticTools />
+        </AppLayout>
+      </ProtectedRoute>
+    } 
+  />,
+  
+  <Route 
+    key="learning-modules"
+    path="/learning-modules" 
+    element={
+      <ProtectedRoute>
+        <AppLayout>
+          <LearningModules />
+        </AppLayout>
+      </ProtectedRoute>
+    } 
+  />,
+  
+  <Route 
+    key="schedule"
+    path="/schedule" 
+    element={
+      <ProtectedRoute>
+        <AppLayout>
+          <Schedule />
+        </AppLayout>
+      </ProtectedRoute>
+    } 
+  />
+];

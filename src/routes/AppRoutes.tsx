@@ -1,10 +1,10 @@
 
 import { Routes, Route, Navigate } from "react-router-dom";
-import { PublicRoutes } from "./publicRoutes";
-import { TherapistRoutes } from "./therapistRoutes";
-import { CaregiverRoutes } from "./caregiverRoutes";
-import { TeacherRoutes } from "./teacherRoutes";
-import { SharedRoutes } from "./sharedRoutes";
+import { publicRoutes } from "./publicRoutes";
+import { therapistRoutes } from "./therapistRoutes";
+import { caregiverRoutes } from "./caregiverRoutes";
+import { teacherRoutes } from "./teacherRoutes";
+import { sharedRoutes } from "./sharedRoutes";
 
 export const AppRoutes = () => {
   return (
@@ -12,12 +12,12 @@ export const AppRoutes = () => {
       {/* Redirect from index to diagnostic tools */}
       <Route path="/" element={<Navigate to="/diagnostic-tools" replace />} />
       
-      {/* Include all route groups */}
-      <PublicRoutes />
-      <TherapistRoutes />
-      <CaregiverRoutes />
-      <TeacherRoutes />
-      <SharedRoutes />
+      {/* Include all routes */}
+      {publicRoutes}
+      {therapistRoutes}
+      {caregiverRoutes}
+      {teacherRoutes}
+      {sharedRoutes}
     </Routes>
   );
 };

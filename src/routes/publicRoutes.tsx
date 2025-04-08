@@ -4,22 +4,17 @@ import { useAuth } from "@/contexts/AuthContext";
 import Index from "@/pages/Index";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
-import { Fragment } from "react";
 
-export const PublicRoutes = () => {
-  const { currentUser } = useAuth();
-  
-  return (
-    <Fragment>
-      <Route path="/" element={<Index />} />
-      <Route 
-        path="/login" 
-        element={currentUser ? <Navigate to="/dashboard" /> : <Login />} 
-      />
-      <Route 
-        path="/register" 
-        element={currentUser ? <Navigate to="/dashboard" /> : <Register />} 
-      />
-    </Fragment>
-  );
-};
+export const publicRoutes = [
+  <Route key="index" path="/" element={<Index />} />,
+  <Route 
+    key="login"
+    path="/login" 
+    element={<Login />}
+  />,
+  <Route 
+    key="register"
+    path="/register" 
+    element={<Register />}
+  />
+];
