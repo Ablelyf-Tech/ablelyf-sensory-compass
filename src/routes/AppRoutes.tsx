@@ -25,6 +25,7 @@ export const AppRoutes = () => {
       <Route path="assessments/*" element={<TherapistRoutes />} />
       <Route path="learning-modules/*" element={<TherapistRoutes />} />
       <Route path="schedule/*" element={<TherapistRoutes />} />
+      <Route path="diagnostic-tools/*" element={<TherapistRoutes />} />
       
       <Route path="patient-profile/*" element={<CaregiverRoutes />} />
       <Route path="daily-log/*" element={<CaregiverRoutes />} />
