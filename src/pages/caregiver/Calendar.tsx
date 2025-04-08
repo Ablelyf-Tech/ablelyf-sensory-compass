@@ -185,8 +185,10 @@ const CalendarPage: React.FC = () => {
     let participants: string[] = [];
     
     if (typeof newEvent.participants === 'string') {
+      // Handle case where participants is a string (from input)
       participants = newEvent.participants.split(',').map(p => p.trim()).filter(Boolean);
     } else if (Array.isArray(newEvent.participants)) {
+      // Handle case where participants is already an array
       participants = newEvent.participants;
     }
 
@@ -384,7 +386,10 @@ const CalendarPage: React.FC = () => {
                           ? newEvent.participants.join(', ') 
                           : ''
                     }
-                    onChange={(e) => setNewEvent({ ...newEvent, participants: e.target.value })}
+                    onChange={(e) => setNewEvent({ 
+                      ...newEvent, 
+                      participants: e.target.value // Store as string initially
+                    })}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-start gap-4">
@@ -471,7 +476,8 @@ const CalendarPage: React.FC = () => {
                   Day: (props) => {
                     const date = props.date;
                     const dateEvents = getEventsForDate(date);
-                    const isSelected = props.selected && isSameDay(props.selected, date);
+                    // Using explicit check with the actual selectedDate state
+                    const isSelected = isSameDay(selectedDate, date);
                     
                     return (
                       <div className="relative">
