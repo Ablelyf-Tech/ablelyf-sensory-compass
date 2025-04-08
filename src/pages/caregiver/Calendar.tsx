@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -25,20 +26,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, addDays, addMonths, subMonths, parseISO, isSameDay, isToday } from 'date-fns';
-
-interface CalendarEvent {
-  id: string;
-  title: string;
-  date: Date;
-  startTime?: string;
-  endTime?: string;
-  type: 'therapy' | 'doctor' | 'school' | 'activity' | 'medication' | 'other';
-  location?: string;
-  description?: string;
-  participants?: string[];
-  completed?: boolean;
-  recurring?: 'daily' | 'weekly' | 'monthly' | 'none';
-}
+import { CalendarEvent } from '@/types';
 
 const mockEvents: CalendarEvent[] = [
   {
@@ -194,11 +182,11 @@ const CalendarPage: React.FC = () => {
       return;
     }
 
-    let participants: string[] | undefined;
+    let participants: string[] = [];
     
     if (typeof newEvent.participants === 'string') {
       participants = newEvent.participants.split(',').map(p => p.trim()).filter(Boolean);
-    } else {
+    } else if (Array.isArray(newEvent.participants)) {
       participants = newEvent.participants;
     }
 
@@ -482,9 +470,8 @@ const CalendarPage: React.FC = () => {
                 components={{
                   Day: (props) => {
                     const date = props.date;
-                    const selected = props.selected;
                     const dateEvents = getEventsForDate(date);
-                    const isSelected = selected && isSameDay(selected, date);
+                    const isSelected = props.selected && isSameDay(props.selected, date);
                     
                     return (
                       <div className="relative">

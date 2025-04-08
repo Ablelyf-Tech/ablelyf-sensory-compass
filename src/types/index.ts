@@ -66,3 +66,17 @@ export interface TherapyGoal {
   status: 'not-started' | 'in-progress' | 'achieved';
   progress: number;
 }
+
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  date: Date;
+  startTime?: string;
+  endTime?: string;
+  type: 'therapy' | 'doctor' | 'school' | 'activity' | 'medication' | 'other';
+  location?: string;
+  description?: string;
+  participants?: string[];
+  completed?: boolean;
+  recurring?: 'daily' | 'weekly' | 'monthly' | 'none';
+}
