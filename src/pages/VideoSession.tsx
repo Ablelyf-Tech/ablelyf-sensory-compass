@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { AppLayout } from '@/components/layout/AppLayout';
 import { CameraModule } from '@/components/camera/CameraModule';
 import { useAuth } from '@/contexts/AuthContext';
 import { SessionHeader } from '@/components/video-session/SessionHeader';
@@ -17,7 +16,7 @@ const VideoSession: React.FC = () => {
   const notes = getRoleSpecificNotes(role);
 
   return (
-    <AppLayout>
+    <>
       <SessionHeader role={role} />
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -31,7 +30,7 @@ const VideoSession: React.FC = () => {
           <SessionNotes notes={notes} />
         </div>
       </div>
-    </AppLayout>
+    </>
   );
 };
 

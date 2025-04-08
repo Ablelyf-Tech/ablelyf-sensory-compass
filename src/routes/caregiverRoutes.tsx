@@ -5,10 +5,11 @@ import PatientProfile from "@/pages/caregiver/PatientProfile";
 import DailyLog from "@/pages/caregiver/DailyLog";
 import Alerts from "@/pages/caregiver/Alerts";
 import Calendar from "@/pages/caregiver/Calendar";
+import { Fragment } from "react";
 
 export const CaregiverRoutes = () => {
   return (
-    <>
+    <Fragment>
       <Route 
         path="/patient-profile" 
         element={
@@ -44,6 +45,6 @@ export const CaregiverRoutes = () => {
           </ProtectedRoute>
         } 
       />
-    </>
+    </Fragment>
   );
 };

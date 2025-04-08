@@ -5,10 +5,11 @@ import Classroom from "@/pages/teacher/Classroom";
 import ProgressReports from "@/pages/teacher/ProgressReports";
 import Materials from "@/pages/teacher/Materials";
 import TeacherCalendar from "@/pages/teacher/Calendar";
+import { Fragment } from "react";
 
 export const TeacherRoutes = () => {
   return (
-    <>
+    <Fragment>
       <Route 
         path="/classroom" 
         element={
@@ -44,6 +45,6 @@ export const TeacherRoutes = () => {
           </ProtectedRoute>
         } 
       />
-    </>
+    </Fragment>
   );
 };

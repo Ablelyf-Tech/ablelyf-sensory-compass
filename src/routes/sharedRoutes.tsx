@@ -4,10 +4,11 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import Dashboard from "@/pages/Dashboard";
 import VideoSession from "@/pages/VideoSession";
 import NotFound from "@/pages/NotFound";
+import { Fragment } from "react";
 
 export const SharedRoutes = () => {
   return (
-    <>
+    <Fragment>
       <Route 
         path="/dashboard" 
         element={
@@ -28,6 +29,6 @@ export const SharedRoutes = () => {
       
       {/* Catch-all route */}
       <Route path="*" element={<NotFound />} />
-    </>
+    </Fragment>
   );
 };

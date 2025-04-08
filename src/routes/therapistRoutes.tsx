@@ -8,10 +8,11 @@ import Assessments from "@/pages/therapist/Assessments";
 import LearningModules from "@/pages/therapist/LearningModules";
 import Schedule from "@/pages/therapist/Schedule";
 import DiagnosticTools from "@/pages/therapist/DiagnosticTools";
+import { Fragment } from "react";
 
 export const TherapistRoutes = () => {
   return (
-    <>
+    <Fragment>
       <Route 
         path="/patients" 
         element={
@@ -77,6 +78,6 @@ export const TherapistRoutes = () => {
           </ProtectedRoute>
         } 
       />
-    </>
+    </Fragment>
   );
 };

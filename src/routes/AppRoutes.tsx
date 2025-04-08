@@ -5,8 +5,6 @@ import { TherapistRoutes } from "./therapistRoutes";
 import { CaregiverRoutes } from "./caregiverRoutes";
 import { TeacherRoutes } from "./teacherRoutes";
 import { SharedRoutes } from "./sharedRoutes";
-import { AppLayout } from "@/components/layout/AppLayout";
-import DiagnosticTools from "@/pages/therapist/DiagnosticTools";
 
 export const AppRoutes = () => {
   return (
@@ -14,9 +12,7 @@ export const AppRoutes = () => {
       {/* Redirect from index to diagnostic tools */}
       <Route path="/" element={<Navigate to="/diagnostic-tools" replace />} />
       
-      {/* Wrap all protected routes with AppLayout */}
-      <Route path="/" element={<AppLayout><DiagnosticTools /></AppLayout>} />
-      
+      {/* Include all route groups */}
       <PublicRoutes />
       <TherapistRoutes />
       <CaregiverRoutes />
