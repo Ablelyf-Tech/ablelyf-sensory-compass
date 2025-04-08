@@ -27,9 +27,17 @@ import { cn } from '@/lib/utils';
 import { format, addDays, addMonths, subMonths, isSameDay, isToday } from 'date-fns';
 import { CalendarEvent } from '@/types';
 
-type PartialCalendarEvent = Partial<CalendarEvent> & {
-  participants?: string[] | string;
-};
+interface NewEventForm {
+  title?: string;
+  date?: Date;
+  startTime?: string;
+  endTime?: string;
+  type?: CalendarEvent['type'];
+  location?: string;
+  description?: string;
+  participants?: string | string[];
+  recurring?: CalendarEvent['recurring'];
+}
 
 const mockEvents: CalendarEvent[] = [
   {
@@ -165,7 +173,7 @@ const TeacherCalendarPage: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [showEventDetails, setShowEventDetails] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
-  const [newEvent, setNewEvent] = useState<PartialCalendarEvent>({
+  const [newEvent, setNewEvent] = useState<NewEventForm>({
     date: new Date(),
     type: 'school',
     recurring: 'none'

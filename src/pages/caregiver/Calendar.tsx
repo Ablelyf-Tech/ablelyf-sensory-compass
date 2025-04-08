@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -27,9 +28,18 @@ import { cn } from '@/lib/utils';
 import { format, addDays, addMonths, subMonths, parseISO, isSameDay, isToday } from 'date-fns';
 import { CalendarEvent } from '@/types';
 
-type PartialCalendarEvent = Partial<CalendarEvent> & {
-  participants?: string[] | string;
-};
+// Define a type for the new event form state
+interface NewEventForm {
+  title?: string;
+  date?: Date;
+  startTime?: string;
+  endTime?: string;
+  type?: CalendarEvent['type'];
+  location?: string;
+  description?: string;
+  participants?: string | string[];
+  recurring?: CalendarEvent['recurring'];
+}
 
 const mockEvents: CalendarEvent[] = [
   {
@@ -162,7 +172,7 @@ const CalendarPage: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [showEventDetails, setShowEventDetails] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
-  const [newEvent, setNewEvent] = useState<PartialCalendarEvent>({
+  const [newEvent, setNewEvent] = useState<NewEventForm>({
     date: new Date(),
     type: 'therapy',
     recurring: 'none'
@@ -185,6 +195,7 @@ const CalendarPage: React.FC = () => {
       return;
     }
 
+    // Process participants
     let participants: string[] = [];
     
     if (typeof newEvent.participants === 'string' && newEvent.participants) {
@@ -258,6 +269,7 @@ const CalendarPage: React.FC = () => {
                 <DialogTitle>Create New Event</DialogTitle>
               </DialogHeader>
               <div className="grid gap-4 py-4">
+                {/* Title input */}
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="event-title" className="text-right">
                     Title
@@ -270,6 +282,7 @@ const CalendarPage: React.FC = () => {
                     onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
                   />
                 </div>
+                {/* Date picker */}
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="event-date" className="text-right">
                     Date
@@ -283,6 +296,7 @@ const CalendarPage: React.FC = () => {
                     />
                   </div>
                 </div>
+                {/* Time inputs */}
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label className="text-right">Time</Label>
                   <div className="col-span-3 grid grid-cols-2 gap-4">
@@ -310,6 +324,7 @@ const CalendarPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                {/* Event type select */}
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="event-type" className="text-right">
                     Type
@@ -336,6 +351,7 @@ const CalendarPage: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                {/* Recurring select */}
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="event-recurring" className="text-right">
                     Recurring
@@ -360,6 +376,7 @@ const CalendarPage: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                {/* Location input */}
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="event-location" className="text-right">
                     Location
@@ -372,6 +389,7 @@ const CalendarPage: React.FC = () => {
                     onChange={(e) => setNewEvent({ ...newEvent, location: e.target.value })}
                   />
                 </div>
+                {/* Participants input */}
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="event-participants" className="text-right">
                     Participants
@@ -393,6 +411,7 @@ const CalendarPage: React.FC = () => {
                     })}
                   />
                 </div>
+                {/* Description textarea */}
                 <div className="grid grid-cols-4 items-start gap-4">
                   <Label htmlFor="event-description" className="text-right pt-2">
                     Description
@@ -422,7 +441,9 @@ const CalendarPage: React.FC = () => {
           </Dialog>
         </div>
         
+        {/* Main calendar layout */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Calendar component */}
           <Card className="lg:col-span-3">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
@@ -513,6 +534,7 @@ const CalendarPage: React.FC = () => {
             </CardContent>
           </Card>
           
+          {/* Sidebar with selected date and upcoming events */}
           <div className="space-y-6">
             <Card>
               <CardHeader className="pb-2">
@@ -673,6 +695,7 @@ const CalendarPage: React.FC = () => {
           </div>
         </div>
         
+        {/* Event details dialog */}
         <Dialog open={showEventDetails} onOpenChange={setShowEventDetails}>
           {selectedEvent && (
             <DialogContent className="sm:max-w-[500px]">
