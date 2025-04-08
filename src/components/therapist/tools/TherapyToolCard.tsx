@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TherapyTool, TherapyToolTypes } from '@/types';
-import { Download, Bookmark, BookmarkCheck, Info, Upload } from 'lucide-react';
+import { Download, Bookmark, BookmarkCheck, Info } from 'lucide-react';
 
 interface TherapyToolCardProps {
   tool: TherapyTool;
@@ -71,14 +71,6 @@ export const TherapyToolCard: React.FC<TherapyToolCardProps> = ({
         >
           <Download className="mr-2 h-4 w-4" />
           Download
-        </Button>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="flex-1"
-        >
-          <Upload className="mr-2 h-4 w-4" />
-          Upload
         </Button>
         <Button 
           variant="outline" 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { 
@@ -8,7 +7,8 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { 
-  User, LogOut, Home, Video
+  User, LogOut, Home, Users, Activity, Calendar, Settings, 
+  FileText, AlertTriangle, Brain, Award, Video, Stethoscope, Hammer
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -34,14 +34,49 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // Define navigation items based on user role - simplified
+  // Define navigation items based on user role
   const getNavItems = () => {
     const baseItems = [
       { name: 'Dashboard', path: '/dashboard', icon: Home },
       { name: 'Video Session', path: '/video-session', icon: Video },
     ];
 
-    return baseItems;
+    const roleSpecificItems = {
+      therapist: [
+        { name: 'Patients', path: '/patients', icon: Users },
+        { name: 'Therapy Plans', path: '/therapy-plans', icon: FileText },
+        { name: 'Assessments', path: '/assessments', icon: Activity },
+        { name: 'Diagnostic Tools', path: '/diagnostic-tools', icon: Stethoscope },
+        { name: 'Therapy Tools', path: '/therapy-tools', icon: Hammer },
+        { name: 'Learning Modules', path: '/learning-modules', icon: Brain },
+      ],
+      caregiver: [
+        { name: 'Patient Profile', path: '/patient-profile', icon: User },
+        { name: 'Daily Log', path: '/daily-log', icon: Activity },
+        { name: 'Alerts', path: '/alerts', icon: AlertTriangle },
+        { name: 'Calendar', path: '/calendar', icon: Calendar },
+      ],
+      admin: [
+        { name: 'User Management', path: '/users', icon: Users },
+        { name: 'System Metrics', path: '/metrics', icon: Activity },
+        { name: 'Certifications', path: '/certifications', icon: Award },
+        { name: 'System Settings', path: '/settings', icon: Settings },
+      ],
+      teacher: [
+        { name: 'Classroom', path: '/classroom', icon: Users },
+        { name: 'Progress Reports', path: '/progress', icon: Activity },
+        { name: 'Materials', path: '/materials', icon: FileText },
+        { name: 'Calendar', path: '/calendar', icon: Calendar },
+      ],
+      hr: [
+        { name: 'Employee Profiles', path: '/employees', icon: Users },
+        { name: 'Accommodation Plans', path: '/accommodations', icon: FileText },
+        { name: 'Inclusivity Metrics', path: '/inclusivity', icon: Activity },
+        { name: 'Training', path: '/training', icon: Brain },
+      ],
+    };
+
+    return [...baseItems, ...(roleSpecificItems[currentUser.role] || [])];
   };
 
   const navItems = getNavItems();
@@ -53,7 +88,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           <SidebarHeader className="px-3 py-4">
             <div className="flex items-center gap-2">
               <div className="rounded-full bg-ablelyf-blue-500 w-8 h-8 flex items-center justify-center text-white">
-                <User size={18} />
+                <Brain size={18} />
               </div>
               <div>
                 <h1 className="text-lg font-bold">AbleLyf</h1>
