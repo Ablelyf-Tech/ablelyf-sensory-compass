@@ -28,6 +28,12 @@ import DailyLog from "./pages/caregiver/DailyLog";
 import Alerts from "./pages/caregiver/Alerts";
 import Calendar from "./pages/caregiver/Calendar";
 
+// Teacher Pages
+import Classroom from "./pages/teacher/Classroom";
+import ProgressReports from "./pages/teacher/ProgressReports";
+import Materials from "./pages/teacher/Materials";
+import TeacherCalendar from "./pages/teacher/Calendar";
+
 const queryClient = new QueryClient();
 
 // Protected route wrapper
@@ -153,6 +159,43 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Calendar />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Teacher routes */}
+      <Route 
+        path="/classroom" 
+        element={
+          <ProtectedRoute>
+            <Classroom />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/progress" 
+        element={
+          <ProtectedRoute>
+            <ProgressReports />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/materials" 
+        element={
+          <ProtectedRoute>
+            <Materials />
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/teacher-calendar" 
+        element={
+          <ProtectedRoute>
+            <TeacherCalendar />
           </ProtectedRoute>
         } 
       />

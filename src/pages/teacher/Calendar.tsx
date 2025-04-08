@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -19,12 +20,12 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { 
   Calendar as CalendarIcon, Clock, Plus,
-  Brain, Users, Book, ChevronLeft, 
+  Users, Book, ChevronLeft, 
   ChevronRight, CheckCircle2, ArrowRight,
-  Video, MapPin, User, AlertTriangle
+  MapPin, AlertTriangle, FileText, Edit
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { format, addDays, addMonths, subMonths, parseISO, isSameDay, isToday } from 'date-fns';
+import { format, addDays, addMonths, subMonths, isSameDay, isToday } from 'date-fns';
 import { CalendarEvent } from '@/types';
 
 type PartialCalendarEvent = Partial<CalendarEvent> & {
@@ -34,81 +35,84 @@ type PartialCalendarEvent = Partial<CalendarEvent> & {
 const mockEvents: CalendarEvent[] = [
   {
     id: '1',
-    title: 'Occupational Therapy',
+    title: 'Class Reading Circle',
     date: addDays(new Date(), 1),
     startTime: '10:00',
     endTime: '11:00',
-    type: 'therapy',
-    location: 'Sensory Health Center',
-    description: 'Weekly occupational therapy session with Dr. Rodriguez',
-    participants: ['Dr. Rodriguez', 'Alex'],
+    type: 'school',
+    location: 'Classroom 202',
+    description: 'Small group reading activity focusing on comprehension',
+    participants: ['Whole Class'],
     recurring: 'weekly'
   },
   {
     id: '2',
-    title: 'Speech Therapy',
+    title: 'IEP Meeting - Alex Johnson',
     date: addDays(new Date(), 3),
     startTime: '14:00',
     endTime: '15:00',
-    type: 'therapy',
-    location: 'Sensory Health Center',
-    description: 'Speech therapy focusing on social communication',
-    participants: ['Dr. Johnson', 'Alex'],
-    recurring: 'weekly'
-  },
-  {
-    id: '3',
-    title: 'Pediatrician Appointment',
-    date: addDays(new Date(), 5),
-    startTime: '09:30',
-    endTime: '10:30',
-    type: 'doctor',
-    location: 'ChildrenWell Medical Center',
-    description: 'Regular check-up with Dr. Patel',
-    participants: ['Dr. Patel', 'Alex', 'Parent']
-  },
-  {
-    id: '4',
-    title: 'School IEP Meeting',
-    date: addDays(new Date(), 7),
-    startTime: '15:00',
-    endTime: '16:00',
     type: 'school',
-    location: 'Brookside Elementary - Room 202',
-    description: 'Annual IEP review meeting',
-    participants: ['Ms. Thompson', 'School Counselor', 'Alex', 'Parent'],
+    location: 'Conference Room',
+    description: 'Annual IEP review with parents and support team',
+    participants: ['Alex Johnson', 'Parents', 'School Counselor', 'OT Specialist'],
     recurring: 'none'
   },
   {
+    id: '3',
+    title: 'Science Experiment Day',
+    date: addDays(new Date(), 5),
+    startTime: '09:30',
+    endTime: '11:30',
+    type: 'school',
+    location: 'Science Lab',
+    description: 'Hands-on science experiments with visual supports',
+    participants: ['Whole Class'],
+    recurring: 'none'
+  },
+  {
+    id: '4',
+    title: 'Teacher Collaboration',
+    date: addDays(new Date(), 7),
+    startTime: '15:00',
+    endTime: '16:00',
+    type: 'other',
+    location: 'Staff Room',
+    description: 'Collaboration with support staff on student accommodations',
+    participants: ['Support Staff', 'Resource Teacher'],
+    recurring: 'monthly'
+  },
+  {
     id: '5',
-    title: 'Sensory Playgroup',
+    title: 'Sensory Breaks',
     date: new Date(),
     startTime: '11:00',
-    endTime: '12:00',
+    endTime: '11:15',
     type: 'activity',
-    location: 'Community Center',
-    description: 'Structured playgroup for sensory integration',
-    participants: ['Group Facilitator', 'Alex', '5 peers'],
-    recurring: 'weekly'
+    location: 'Sensory Room',
+    description: 'Scheduled sensory breaks for students who need them',
+    participants: ['Selected Students'],
+    recurring: 'daily'
   },
   {
     id: '6',
-    title: 'Evening Medication',
+    title: 'Math Assessment',
     date: new Date(),
-    startTime: '19:00',
-    type: 'medication',
-    description: 'Daily evening medication',
-    recurring: 'daily',
-    completed: true
+    startTime: '13:00',
+    endTime: '14:00',
+    type: 'school',
+    description: 'Math assessment with accommodations as needed',
+    location: 'Classroom 202',
+    participants: ['Whole Class'],
+    completed: false
   }
 ];
 
 const getEventTypeIcon = (type: CalendarEvent['type']) => {
   switch (type) {
     case 'therapy':
-      return <Brain className="h-4 w-4" />;
+      return <AlertTriangle className="h-4 w-4" />;
     case 'doctor':
-      return <User className="h-4 w-4" />;
+      return <AlertTriangle className="h-4 w-4" />;
     case 'school':
       return <Book className="h-4 w-4" />;
     case 'activity':
@@ -154,7 +158,7 @@ const getEventColor = (type: CalendarEvent['type']) => {
   }
 };
 
-const CalendarPage: React.FC = () => {
+const TeacherCalendarPage: React.FC = () => {
   const { toast } = useToast();
   const [events, setEvents] = useState<CalendarEvent[]>(mockEvents);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -164,7 +168,7 @@ const CalendarPage: React.FC = () => {
   const [showAddEvent, setShowAddEvent] = useState(false);
   const [newEvent, setNewEvent] = useState<PartialCalendarEvent>({
     date: new Date(),
-    type: 'therapy',
+    type: 'school',
     recurring: 'none'
   });
 
@@ -199,7 +203,7 @@ const CalendarPage: React.FC = () => {
       date: newEvent.date || new Date(),
       startTime: newEvent.startTime,
       endTime: newEvent.endTime,
-      type: newEvent.type as CalendarEvent['type'] || 'other',
+      type: newEvent.type as CalendarEvent['type'] || 'school',
       location: newEvent.location,
       description: newEvent.description,
       participants: participants,
@@ -211,7 +215,7 @@ const CalendarPage: React.FC = () => {
     setShowAddEvent(false);
     setNewEvent({
       date: new Date(),
-      type: 'therapy',
+      type: 'school',
       recurring: 'none'
     });
 
@@ -244,7 +248,7 @@ const CalendarPage: React.FC = () => {
     <AppLayout>
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h1 className="text-3xl font-bold tracking-tight">Calendar</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Class Calendar</h1>
           
           <Dialog open={showAddEvent} onOpenChange={setShowAddEvent}>
             <DialogTrigger asChild>
@@ -255,7 +259,7 @@ const CalendarPage: React.FC = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
-                <DialogTitle>Create New Event</DialogTitle>
+                <DialogTitle>Create New Class Event</DialogTitle>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -327,11 +331,8 @@ const CalendarPage: React.FC = () => {
                       <SelectValue placeholder="Select event type" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="therapy">Therapy</SelectItem>
-                      <SelectItem value="doctor">Doctor</SelectItem>
-                      <SelectItem value="school">School</SelectItem>
-                      <SelectItem value="activity">Activity</SelectItem>
-                      <SelectItem value="medication">Medication</SelectItem>
+                      <SelectItem value="school">Class Activity</SelectItem>
+                      <SelectItem value="activity">Special Activity</SelectItem>
                       <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
@@ -378,7 +379,7 @@ const CalendarPage: React.FC = () => {
                   </Label>
                   <Input
                     id="event-participants"
-                    placeholder="Names separated by commas"
+                    placeholder="Whole Class or specific students"
                     className="col-span-3"
                     value={
                       typeof newEvent.participants === 'string' 
@@ -732,44 +733,30 @@ const CalendarPage: React.FC = () => {
                   </div>
                 )}
                 
-                {selectedEvent.type === 'therapy' && (
-                  <div className="flex gap-3 pt-3 mt-3 border-t">
-                    <Button 
-                      variant="outline"
-                      className="flex-1 gap-2"
-                      onClick={() => {
-                        toast({
-                          title: "Joining video session",
-                          description: "Setting up your video connection...",
-                        });
-                        setShowEventDetails(false);
-                      }}
-                    >
-                      <Video className="h-4 w-4" />
-                      Join Video
-                    </Button>
-                    <Button 
-                      className="flex-1 gap-2 bg-ablelyf-blue-500 hover:bg-ablelyf-blue-600"
-                      onClick={() => handleMarkCompleted(selectedEvent.id)}
-                      disabled={selectedEvent.completed}
-                    >
-                      <CheckCircle2 className="h-4 w-4" />
-                      {selectedEvent.completed ? 'Completed' : 'Mark Complete'}
-                    </Button>
-                  </div>
-                )}
-                
-                {selectedEvent.type !== 'therapy' && !selectedEvent.completed && (
-                  <div className="flex gap-3 pt-3 mt-3 border-t">
-                    <Button 
-                      className="w-full gap-2 bg-ablelyf-blue-500 hover:bg-ablelyf-blue-600"
-                      onClick={() => handleMarkCompleted(selectedEvent.id)}
-                    >
-                      <CheckCircle2 className="h-4 w-4" />
-                      Mark as Completed
-                    </Button>
-                  </div>
-                )}
+                <div className="flex gap-3 pt-3 mt-3 border-t">
+                  <Button 
+                    variant="outline"
+                    className="flex-1 gap-2"
+                    onClick={() => {
+                      setShowEventDetails(false);
+                      toast({
+                        title: "Edit mode",
+                        description: "Editing functionality would open here.",
+                      });
+                    }}
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit Event
+                  </Button>
+                  <Button 
+                    className="flex-1 gap-2 bg-ablelyf-blue-500 hover:bg-ablelyf-blue-600"
+                    onClick={() => handleMarkCompleted(selectedEvent.id)}
+                    disabled={selectedEvent.completed}
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    {selectedEvent.completed ? 'Completed' : 'Mark Complete'}
+                  </Button>
+                </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowEventDetails(false)}>
@@ -784,4 +771,4 @@ const CalendarPage: React.FC = () => {
   );
 };
 
-export default CalendarPage;
+export default TeacherCalendarPage;
