@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { 
@@ -28,7 +27,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const getNavItems = () => {
     const baseItems = [
       { name: 'Dashboard', path: '/dashboard', icon: Home },
-      { name: 'Video Session', path: '/video-session', icon: Video },
     ];
 
     const roleSpecificItems = {
@@ -36,31 +34,37 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         { name: 'Patients', path: '/patients', icon: Users },
         { name: 'Therapy Plans', path: '/therapy-plans', icon: FileText },
         { name: 'Assessments', path: '/assessments', icon: Activity },
+        { name: 'Diagnostic Tools', path: '/diagnostic-tools', icon: Brain },
         { name: 'Learning Modules', path: '/learning-modules', icon: Brain },
+        { name: 'Video Session', path: '/video-session', icon: Video },
       ],
       caregiver: [
         { name: 'Patient Profile', path: '/patient-profile', icon: User },
         { name: 'Daily Log', path: '/daily-log', icon: Activity },
         { name: 'Alerts', path: '/alerts', icon: AlertTriangle },
         { name: 'Calendar', path: '/calendar', icon: Calendar },
+        { name: 'Video Session', path: '/video-session', icon: Video },
       ],
       admin: [
         { name: 'User Management', path: '/users', icon: Users },
         { name: 'System Metrics', path: '/metrics', icon: Activity },
         { name: 'Certifications', path: '/certifications', icon: Award },
         { name: 'System Settings', path: '/settings', icon: Settings },
+        { name: 'Video Session', path: '/video-session', icon: Video },
       ],
       teacher: [
         { name: 'Classroom', path: '/classroom', icon: Users },
         { name: 'Progress Reports', path: '/progress', icon: Activity },
         { name: 'Materials', path: '/materials', icon: FileText },
         { name: 'Calendar', path: '/calendar', icon: Calendar },
+        { name: 'Video Session', path: '/video-session', icon: Video },
       ],
       hr: [
         { name: 'Employee Profiles', path: '/employees', icon: Users },
         { name: 'Accommodation Plans', path: '/accommodations', icon: FileText },
         { name: 'Inclusivity Metrics', path: '/inclusivity', icon: Activity },
         { name: 'Training', path: '/training', icon: Brain },
+        { name: 'Video Session', path: '/video-session', icon: Video },
       ],
     };
 
