@@ -83,15 +83,21 @@ export interface TherapyPlan {
 }
 
 // Calendar event types
+export type CalendarEventType = 'therapy' | 'doctor' | 'school' | 'activity' | 'medication' | 'other' | 'session' | 'assessment' | 'meeting' | 'reminder';
+export type RecurringType = 'none' | 'daily' | 'weekly' | 'monthly';
+
 export interface CalendarEvent {
   id: string;
   title: string;
-  patientId?: string;
-  patientName?: string;
-  start: string;
-  end: string;
-  type: 'session' | 'assessment' | 'meeting' | 'reminder';
+  date: Date;
+  startTime?: string;
+  endTime?: string;
+  type: CalendarEventType;
   location?: string;
   description?: string;
-  status?: 'scheduled' | 'completed' | 'cancelled';
+  participants?: string[];
+  recurring?: RecurringType;
+  completed?: boolean;
+  patientId?: string;
+  patientName?: string;
 }
