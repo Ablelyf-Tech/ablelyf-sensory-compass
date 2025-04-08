@@ -10,7 +10,7 @@ export const CaregiverRoutes = () => {
   return (
     <Routes>
       <Route 
-        path="patient-profile" 
+        path="/" 
         element={
           <ProtectedRoute>
             <PatientProfile />
@@ -19,7 +19,7 @@ export const CaregiverRoutes = () => {
       />
       
       <Route 
-        path="daily-log" 
+        path="/" 
         element={
           <ProtectedRoute>
             <DailyLog />
@@ -28,7 +28,7 @@ export const CaregiverRoutes = () => {
       />
       
       <Route 
-        path="alerts" 
+        path="/" 
         element={
           <ProtectedRoute>
             <Alerts />
@@ -37,7 +37,7 @@ export const CaregiverRoutes = () => {
       />
       
       <Route 
-        path="calendar" 
+        path="/" 
         element={
           <ProtectedRoute>
             <Calendar />

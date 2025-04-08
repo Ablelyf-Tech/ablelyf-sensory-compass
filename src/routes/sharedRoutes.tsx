@@ -9,7 +9,7 @@ export const SharedRoutes = () => {
   return (
     <Routes>
       <Route 
-        path="dashboard" 
+        path="/" 
         element={
           <ProtectedRoute>
             <Dashboard />
@@ -18,7 +18,7 @@ export const SharedRoutes = () => {
       />
       
       <Route 
-        path="video-session" 
+        path="/" 
         element={
           <ProtectedRoute>
             <VideoSession />
