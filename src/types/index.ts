@@ -97,4 +97,6 @@ export interface TherapyTool {
   createdBy: 'system' | 'user';
   createdAt: string;
   favorited: boolean;
+  fileSize?: string;
+  content?: string;
 }
