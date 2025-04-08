@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { format, startOfWeek, endOfWeek, addDays, isSameDay, isWithinInterval, isValid } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -12,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { DayContent, DayProps } from "react-day-picker";
+import { DayClickEventHandler, DayContentProps } from "react-day-picker";
 
 const mockEvents: CalendarEvent[] = [
   {
@@ -150,6 +151,41 @@ const CalendarAlternative = () => {
     };
   });
 
+  // Custom Day component for the calendar
+  const CustomDay = (props: DayContentProps) => {
+    const { date, activeModifiers } = props;
+    const events = date ? getEventsForDay(date) : [];
+    const isSelected = activeModifiers?.selected;
+    
+    return (
+      <div
+        className={cn(
+          "relative h-12 w-12 p-0 font-normal",
+          isSelected && "text-primary-foreground",
+          events.length > 0 && "font-semibold"
+        )}
+      >
+        <div className="flex h-full w-full items-center justify-center">
+          {format(date, "d")}
+        </div>
+        {date && events.length > 0 && (
+          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
+            {events.length > 3
+              ? <Badge variant="secondary" className="h-1.5 w-4 p-0" />
+              : events.slice(0, 3).map((event, i) => (
+                  <Badge
+                    key={i}
+                    variant="secondary"
+                    className={cn("h-1.5 w-1.5 p-0", eventTypeColors[event.type || "other"])}
+                  />
+                ))
+            }
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="container py-6">
       <h1 className="text-3xl font-bold mb-6">Calendar</h1>
@@ -244,35 +280,7 @@ const CalendarAlternative = () => {
                 onSelect={(date) => date && setSelectedDate(date)}
                 className="rounded-md border"
                 components={{
-                  Day: (props: DayProps) => {
-                    const date = props.date;
-                    const events = date ? getEventsForDay(date) : [];
-                    return (
-                      <div
-                        className={cn(
-                          "relative h-12 w-12 p-0 font-normal",
-                          props.selected && "text-primary-foreground",
-                          events.length > 0 && "font-semibold"
-                        )}
-                      >
-                        <DayContent {...props} />
-                        {date && events.length > 0 && (
-                          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5">
-                            {events.length > 3
-                              ? <Badge variant="secondary" className="h-1.5 w-4 p-0" />
-                              : events.slice(0, 3).map((event, i) => (
-                                  <Badge
-                                    key={i}
-                                    variant="secondary"
-                                    className={cn("h-1.5 w-1.5 p-0", eventTypeColors[event.type || "other"])}
-                                  />
-                                ))
-                            }
-                          </div>
-                        )}
-                      </div>
-                    );
-                  },
+                  DayContent: CustomDay
                 }}
               />
             </CardContent>
