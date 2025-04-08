@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Activity, Calendar, Users } from 'lucide-react';
+import { PatientIntakeForm } from '@/components/therapist/PatientIntakeForm';
 
 export const WelcomeHeader: React.FC = () => {
   const { currentUser } = useAuth();
@@ -15,48 +16,84 @@ export const WelcomeHeader: React.FC = () => {
     return 'evening';
   };
   
-  const getRoleSpecificAction = () => {
+  const renderActionButton = () => {
     switch (currentUser?.role) {
       case 'therapist':
-        return {
-          text: 'Add New Patient',
-          icon: <Plus size={16} />,
-          route: '/patients/new'
-        };
+        return (
+          <PatientIntakeForm>
+            <Button 
+              className="bg-white text-ablelyf-blue-600 hover:bg-ablelyf-blue-50 border border-ablelyf-blue-200 shadow-sm"
+              size="sm"
+            >
+              <span className="flex items-center gap-2">
+                <Plus size={16} />
+                Add New Patient
+              </span>
+            </Button>
+          </PatientIntakeForm>
+        );
       case 'caregiver':
-        return {
-          text: 'Log Activity',
-          icon: <Activity size={16} />,
-          route: '/daily-log/new'
-        };
+        return (
+          <Button 
+            className="bg-white text-ablelyf-blue-600 hover:bg-ablelyf-blue-50 border border-ablelyf-blue-200 shadow-sm"
+            size="sm"
+          >
+            <span className="flex items-center gap-2">
+              <Activity size={16} />
+              Log Activity
+            </span>
+          </Button>
+        );
       case 'teacher':
-        return {
-          text: 'Class Schedule',
-          icon: <Calendar size={16} />,
-          route: '/calendar'
-        };
+        return (
+          <Button 
+            className="bg-white text-ablelyf-blue-600 hover:bg-ablelyf-blue-50 border border-ablelyf-blue-200 shadow-sm"
+            size="sm"
+          >
+            <span className="flex items-center gap-2">
+              <Calendar size={16} />
+              Class Schedule
+            </span>
+          </Button>
+        );
       case 'hr':
-        return {
-          text: 'Add Employee',
-          icon: <Users size={16} />,
-          route: '/employees/new'
-        };
+        return (
+          <Button 
+            className="bg-white text-ablelyf-blue-600 hover:bg-ablelyf-blue-50 border border-ablelyf-blue-200 shadow-sm"
+            size="sm"
+          >
+            <span className="flex items-center gap-2">
+              <Users size={16} />
+              Add Employee
+            </span>
+          </Button>
+        );
       case 'admin':
-        return {
-          text: 'Manage Users',
-          icon: <Users size={16} />,
-          route: '/users'
-        };
+        return (
+          <Button 
+            className="bg-white text-ablelyf-blue-600 hover:bg-ablelyf-blue-50 border border-ablelyf-blue-200 shadow-sm"
+            size="sm"
+          >
+            <span className="flex items-center gap-2">
+              <Users size={16} />
+              Manage Users
+            </span>
+          </Button>
+        );
       default:
-        return {
-          text: 'Dashboard',
-          icon: <Activity size={16} />,
-          route: '/dashboard'
-        };
+        return (
+          <Button 
+            className="bg-white text-ablelyf-blue-600 hover:bg-ablelyf-blue-50 border border-ablelyf-blue-200 shadow-sm"
+            size="sm"
+          >
+            <span className="flex items-center gap-2">
+              <Activity size={16} />
+              Dashboard
+            </span>
+          </Button>
+        );
     }
   };
-
-  const action = getRoleSpecificAction();
 
   return (
     <Card className="bg-ablelyf-blue-100 border-none shadow-none mb-6">
@@ -69,15 +106,7 @@ export const WelcomeHeader: React.FC = () => {
             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
-        <Button 
-          className="bg-white text-ablelyf-blue-600 hover:bg-ablelyf-blue-50 border border-ablelyf-blue-200 shadow-sm"
-          size="sm"
-        >
-          <span className="flex items-center gap-2">
-            {action.icon}
-            {action.text}
-          </span>
-        </Button>
+        {renderActionButton()}
       </CardContent>
     </Card>
   );

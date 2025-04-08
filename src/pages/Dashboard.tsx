@@ -12,6 +12,8 @@ import { User, Brain, Activity, Calendar, AlertTriangle, Clock, Users, BarChart,
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { ResponsiveContainer } from 'recharts';
+import { PatientIntakeForm } from '@/components/therapist/PatientIntakeForm';
+import { Button } from '@/components/ui/button';
 
 const Dashboard: React.FC = () => {
   const { currentUser } = useAuth();
@@ -85,6 +87,11 @@ const Dashboard: React.FC = () => {
 
   const renderTherapistDashboard = () => (
     <div className="space-y-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold">Therapist Dashboard</h2>
+        <PatientIntakeForm />
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <StatsCard
           title="Active Patients"

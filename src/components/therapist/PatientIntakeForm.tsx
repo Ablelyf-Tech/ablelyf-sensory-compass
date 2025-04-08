@@ -48,7 +48,11 @@ const patientFormSchema = z.object({
 
 type PatientFormValues = z.infer<typeof patientFormSchema>;
 
-export function PatientIntakeForm() {
+type PatientIntakeFormProps = {
+  children?: React.ReactNode;
+};
+
+export function PatientIntakeForm({ children }: PatientIntakeFormProps) {
   const { toast } = useToast();
   const [open, setOpen] = React.useState(false);
   
@@ -79,10 +83,12 @@ export function PatientIntakeForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-ablelyf-blue-500">
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add New Patient
-        </Button>
+        {children || (
+          <Button className="bg-ablelyf-blue-500">
+            <UserPlus className="mr-2 h-4 w-4" />
+            Add New Patient
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
