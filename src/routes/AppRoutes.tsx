@@ -10,9 +10,6 @@ import { sharedRoutes } from "./sharedRoutes";
 export const AppRoutes = () => {
   return (
     <Routes>
-      {/* Redirect from index to diagnostic tools */}
-      <Route path="/" element={<Navigate to="/diagnostic-tools" replace />} />
-      
       {/* Include all routes */}
       {publicRoutes}
       {therapistRoutes}
@@ -20,6 +17,9 @@ export const AppRoutes = () => {
       {teacherRoutes}
       {hrRoutes}
       {sharedRoutes}
+      
+      {/* Catch-all route - redirects to home page */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };
