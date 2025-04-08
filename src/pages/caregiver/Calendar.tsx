@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -27,6 +26,10 @@ import {
 import { cn } from '@/lib/utils';
 import { format, addDays, addMonths, subMonths, parseISO, isSameDay, isToday } from 'date-fns';
 import { CalendarEvent } from '@/types';
+
+type PartialCalendarEvent = Partial<CalendarEvent> & {
+  participants?: string[] | string;
+};
 
 const mockEvents: CalendarEvent[] = [
   {
@@ -159,7 +162,7 @@ const CalendarPage: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [showEventDetails, setShowEventDetails] = useState(false);
   const [showAddEvent, setShowAddEvent] = useState(false);
-  const [newEvent, setNewEvent] = useState<Partial<CalendarEvent>>({
+  const [newEvent, setNewEvent] = useState<PartialCalendarEvent>({
     date: new Date(),
     type: 'therapy',
     recurring: 'none'
@@ -184,11 +187,9 @@ const CalendarPage: React.FC = () => {
 
     let participants: string[] = [];
     
-    if (typeof newEvent.participants === 'string') {
-      // Handle case where participants is a string (from input)
+    if (typeof newEvent.participants === 'string' && newEvent.participants) {
       participants = newEvent.participants.split(',').map(p => p.trim()).filter(Boolean);
     } else if (Array.isArray(newEvent.participants)) {
-      // Handle case where participants is already an array
       participants = newEvent.participants;
     }
 
@@ -476,7 +477,6 @@ const CalendarPage: React.FC = () => {
                   Day: (props) => {
                     const date = props.date;
                     const dateEvents = getEventsForDate(date);
-                    // Using explicit check with the actual selectedDate state
                     const isSelected = isSameDay(selectedDate, date);
                     
                     return (
