@@ -1,38 +1,29 @@
 
 import { CalendarEvent, CalendarEventType } from '@/types';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Calendar, 
-  Clock, 
-  AlertTriangle, 
-  Book, 
-  Users, 
-  FileText,
-  Activity
-} from 'lucide-react';
 
-export const getEventTypeIcon = (type: CalendarEventType) => {
+// Returns icon name instead of JSX element
+export const getEventTypeIcon = (type: CalendarEventType): string => {
   switch (type) {
     case 'therapy':
-      return <AlertTriangle className="h-4 w-4" />;
+      return 'alert-triangle';
     case 'doctor':
-      return <Activity className="h-4 w-4" />;
+      return 'activity';
     case 'school':
-      return <Book className="h-4 w-4" />;
+      return 'book';
     case 'activity':
-      return <Users className="h-4 w-4" />;
+      return 'users';
     case 'medication':
-      return <AlertTriangle className="h-4 w-4" />;
+      return 'alert-triangle';
     case 'session':
-      return <Clock className="h-4 w-4" />;
+      return 'clock';
     case 'assessment':
-      return <FileText className="h-4 w-4" />;
+      return 'file-text';
     case 'meeting':
-      return <Users className="h-4 w-4" />;
+      return 'users';
     case 'reminder':
-      return <Clock className="h-4 w-4" />;
+      return 'clock';
     default:
-      return <Calendar className="h-4 w-4" />;
+      return 'calendar';
   }
 };
 
