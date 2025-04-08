@@ -1,16 +1,22 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { therapyPlans, patients } from '@/data/mockData';
-import { FileText, Clock, ChevronRight } from 'lucide-react';
+import { FileText, Clock, ChevronRight, Brain, Activity } from 'lucide-react';
 import { TherapyPlanForm } from '@/components/therapist/TherapyPlanForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ConditionTherapyTemplates } from '@/components/therapist/therapy/ConditionTherapyTemplates';
+import { TherapyActivities } from '@/components/therapist/therapy/TherapyActivities';
+import { TherapyPlanTemplate, TherapyActivity } from '@/types/diagnostic';
 
 const TherapyPlans: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('active');
+  const [templateMode, setTemplateMode] = useState(false);
+  
   // Group plans by status
   const activePlans = therapyPlans.filter(plan => plan.status === 'active');
   const draftPlans = therapyPlans.filter(plan => plan.status === 'draft');
@@ -34,6 +40,17 @@ const TherapyPlans: React.FC = () => {
     const inProgressGoals = plan.goals.filter(g => g.status === 'in-progress').length;
     
     return Math.round((achievedGoals + (inProgressGoals * 0.5)) / totalGoals * 100);
+  };
+
+  const handleSelectTemplate = (template: TherapyPlanTemplate) => {
+    console.log('Selected template:', template);
+    // Here you would typically open the therapy plan form and pre-fill it with template data
+    setTemplateMode(false);
+  };
+  
+  const handleSelectActivity = (activity: TherapyActivity) => {
+    console.log('Selected activity:', activity);
+    // Here you would typically add this activity to an existing or new therapy plan
   };
 
   const renderPlanList = (plans: typeof therapyPlans) => (
@@ -120,64 +137,96 @@ const TherapyPlans: React.FC = () => {
           <h1 className="text-2xl font-bold text-ablelyf-blue-900">Therapy Plans</h1>
           <p className="text-muted-foreground">Create and manage patient therapy plans</p>
         </div>
-        <TherapyPlanForm />
+        
+        <div className="flex gap-2">
+          <Button 
+            variant={templateMode ? "default" : "outline"}
+            onClick={() => setTemplateMode(!templateMode)}
+            className={templateMode ? "bg-ablelyf-blue-500" : ""}
+          >
+            <Brain className="mr-2 h-4 w-4" />
+            Templates & Activities
+          </Button>
+          <TherapyPlanForm />
+        </div>
       </div>
       
-      <Tabs defaultValue="active" className="mb-6">
-        <TabsList>
-          <TabsTrigger value="active">
-            Active Plans ({activePlans.length})
-          </TabsTrigger>
-          <TabsTrigger value="draft">
-            Draft Plans ({draftPlans.length})
-          </TabsTrigger>
-          <TabsTrigger value="completed">
-            Completed Plans ({completedPlans.length})
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="active" className="pt-6">
-          {activePlans.length > 0 ? (
-            renderPlanList(activePlans)
-          ) : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <FileText className="text-muted-foreground mb-4 h-12 w-12" />
-                <h3 className="text-xl font-medium">No Active Plans</h3>
-                <p className="text-muted-foreground">Create a new therapy plan to get started.</p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="draft" className="pt-6">
-          {draftPlans.length > 0 ? (
-            renderPlanList(draftPlans)
-          ) : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <FileText className="text-muted-foreground mb-4 h-12 w-12" />
-                <h3 className="text-xl font-medium">No Draft Plans</h3>
-                <p className="text-muted-foreground">No draft plans currently exist.</p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="completed" className="pt-6">
-          {completedPlans.length > 0 ? (
-            renderPlanList(completedPlans)
-          ) : (
-            <Card>
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <FileText className="text-muted-foreground mb-4 h-12 w-12" />
-                <h3 className="text-xl font-medium">No Completed Plans</h3>
-                <p className="text-muted-foreground">Your completed plans will appear here.</p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-      </Tabs>
+      {templateMode ? (
+        <Tabs defaultValue="templates" className="mb-6">
+          <TabsList>
+            <TabsTrigger value="templates">
+              Condition-Specific Templates
+            </TabsTrigger>
+            <TabsTrigger value="activities">
+              Therapy Activities
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="templates" className="pt-6">
+            <ConditionTherapyTemplates onSelectTemplate={handleSelectTemplate} />
+          </TabsContent>
+          
+          <TabsContent value="activities" className="pt-6">
+            <TherapyActivities onSelectActivity={handleSelectActivity} />
+          </TabsContent>
+        </Tabs>
+      ) : (
+        <Tabs defaultValue="active" className="mb-6" onValueChange={setActiveTab} value={activeTab}>
+          <TabsList>
+            <TabsTrigger value="active">
+              Active Plans ({activePlans.length})
+            </TabsTrigger>
+            <TabsTrigger value="draft">
+              Draft Plans ({draftPlans.length})
+            </TabsTrigger>
+            <TabsTrigger value="completed">
+              Completed Plans ({completedPlans.length})
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="active" className="pt-6">
+            {activePlans.length > 0 ? (
+              renderPlanList(activePlans)
+            ) : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <FileText className="text-muted-foreground mb-4 h-12 w-12" />
+                  <h3 className="text-xl font-medium">No Active Plans</h3>
+                  <p className="text-muted-foreground">Create a new therapy plan to get started.</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="draft" className="pt-6">
+            {draftPlans.length > 0 ? (
+              renderPlanList(draftPlans)
+            ) : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <FileText className="text-muted-foreground mb-4 h-12 w-12" />
+                  <h3 className="text-xl font-medium">No Draft Plans</h3>
+                  <p className="text-muted-foreground">No draft plans currently exist.</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="completed" className="pt-6">
+            {completedPlans.length > 0 ? (
+              renderPlanList(completedPlans)
+            ) : (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <FileText className="text-muted-foreground mb-4 h-12 w-12" />
+                  <h3 className="text-xl font-medium">No Completed Plans</h3>
+                  <p className="text-muted-foreground">Your completed plans will appear here.</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
+      )}
     </AppLayout>
   );
 };
