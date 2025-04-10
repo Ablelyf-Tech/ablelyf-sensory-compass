@@ -13,6 +13,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from '@/components/ui/use-toast';
+import { patients } from '@/data/mockData';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle, ChevronLeft, ChevronRight, FileText, Save } from 'lucide-react';
 
 const diagnosticFormSchema = z.object({
   patientId: z.string().min(1, { message: "Please select a patient" }),
@@ -35,9 +38,9 @@ const diagnosticFormSchema = z.object({
   allergies: z.string().optional(),
   
   // Behavioral Observations
-  attentionScore: z.string().min(1, { message: "Please rate attention" }).optional(),
-  socialInteractionScore: z.string().min(1, { message: "Please rate social interaction" }).optional(),
-  motorSkillsScore: z.string().min(1, { message: "Please rate motor skills" }).optional(),
+  attentionScore: z.string().optional(),
+  socialInteractionScore: z.string().optional(),
+  motorSkillsScore: z.string().optional(),
   behavioralNotes: z.string().optional(),
   
   // Assessment Results
@@ -119,8 +122,30 @@ export const DiagnosticAssessment = () => {
     setCurrentStep(0);
   };
 
+  const getProgressPercentage = () => {
+    return ((currentStep + 1) / steps.length) * 100;
+  };
+
   return (
     <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-lg font-medium">New Diagnostic Assessment</h3>
+          <p className="text-sm text-muted-foreground">Complete all sections to create a comprehensive assessment</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="bg-blue-50">
+            Step {currentStep + 1} of {steps.length}
+          </Badge>
+          <div className="w-32 h-2 bg-gray-200 rounded-full">
+            <div 
+              className="h-full bg-blue-500 rounded-full transition-all duration-300" 
+              style={{ width: `${getProgressPercentage()}%` }}
+            />
+          </div>
+        </div>
+      </div>
+      
       <Tabs value={steps[currentStep].id} className="w-full">
         <TabsList className="grid grid-cols-5 w-full">
           {steps.map((step, index) => (
@@ -131,6 +156,7 @@ export const DiagnosticAssessment = () => {
               disabled={index > currentStep}
               className={index <= currentStep ? "opacity-100" : "opacity-50"}
             >
+              {index < currentStep && <CheckCircle className="mr-1 h-4 w-4 text-green-500" />}
               {step.title}
             </TabsTrigger>
           ))}
@@ -155,9 +181,11 @@ export const DiagnosticAssessment = () => {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="patient1">John Doe</SelectItem>
-                              <SelectItem value="patient2">Jane Smith</SelectItem>
-                              <SelectItem value="patient3">Michael Johnson</SelectItem>
+                              {patients.map((patient) => (
+                                <SelectItem key={patient.id} value={patient.id}>
+                                  {patient.name} ({patient.age})
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                           <FormMessage />
@@ -689,15 +717,25 @@ export const DiagnosticAssessment = () => {
                 variant="outline"
                 onClick={handleBack}
                 disabled={currentStep === 0}
+                className="flex items-center gap-1"
               >
-                Back
+                <ChevronLeft className="w-4 h-4" /> Back
               </Button>
               
               <Button 
                 type="button"
                 onClick={handleNext}
+                className="flex items-center gap-1"
               >
-                {currentStep === steps.length - 1 ? "Submit" : "Next"}
+                {currentStep === steps.length - 1 ? (
+                  <>
+                    <Save className="w-4 h-4" /> Submit Assessment
+                  </>
+                ) : (
+                  <>
+                    Next <ChevronRight className="w-4 h-4" />
+                  </>
+                )}
               </Button>
             </div>
           </form>
