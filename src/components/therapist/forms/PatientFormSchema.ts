@@ -7,6 +7,7 @@ export const patientFormSchema = z.object({
     message: "Age must be a positive number.",
   }),
   condition: z.string().min(2, { message: "Condition is required." }),
+  preconditions: z.array(z.string()).optional().default([]),
   diagnosisDate: z.string().optional(),
   contactPerson: z.string().min(2, { message: "Contact person name is required." }),
   contactPhone: z.string().min(6, { message: "Valid phone number is required." }),

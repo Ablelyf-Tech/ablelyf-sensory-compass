@@ -41,6 +41,7 @@ export function PatientIntakeForm({ children }: PatientIntakeFormProps) {
       name: "",
       age: "",
       condition: "",
+      preconditions: [],
       diagnosisDate: "",
       contactPerson: "",
       contactPhone: "",
