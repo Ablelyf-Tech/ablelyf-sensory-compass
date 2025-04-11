@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { TherapyTool, TherapyToolTypes } from '@/types';
-import { Download, Bookmark, BookmarkCheck, Info, Upload } from 'lucide-react';
+import { Download, Bookmark, BookmarkCheck, Info, Trash } from 'lucide-react';
 
 interface TherapyToolCardProps {
   tool: TherapyTool;
@@ -12,6 +12,7 @@ interface TherapyToolCardProps {
   onDownload: (id: string) => void;
   onViewDetails: (tool: TherapyTool) => void;
   getCategoryBadgeColor: (category: TherapyToolTypes) => string;
+  onDelete?: (id: string) => void;
 }
 
 export const TherapyToolCard: React.FC<TherapyToolCardProps> = ({
@@ -19,7 +20,8 @@ export const TherapyToolCard: React.FC<TherapyToolCardProps> = ({
   onToggleFavorite,
   onDownload,
   onViewDetails,
-  getCategoryBadgeColor
+  getCategoryBadgeColor,
+  onDelete = () => console.log(`Deleting tool: ${tool.id}`)
 }) => {
   return (
     <Card className="flex flex-col h-full">
@@ -76,9 +78,10 @@ export const TherapyToolCard: React.FC<TherapyToolCardProps> = ({
           variant="outline" 
           size="sm" 
           className="flex-1"
+          onClick={() => onDelete(tool.id)}
         >
-          <Upload className="mr-2 h-4 w-4" />
-          Upload
+          <Trash className="mr-2 h-4 w-4" />
+          Delete
         </Button>
         <Button 
           variant="outline" 

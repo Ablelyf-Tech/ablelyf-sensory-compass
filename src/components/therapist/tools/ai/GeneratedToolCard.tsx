@@ -2,18 +2,20 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Download, ArrowRight } from 'lucide-react';
+import { Download, ArrowRight, Trash } from 'lucide-react';
 import { toast } from 'sonner';
 import { GeneratedCategoryTool } from './CategoryAITypes';
 
 interface GeneratedToolCardProps {
   tool: GeneratedCategoryTool;
   onSave: () => void;
+  onDelete?: () => void;
 }
 
 export const GeneratedToolCard: React.FC<GeneratedToolCardProps> = ({ 
   tool, 
-  onSave 
+  onSave,
+  onDelete = () => toast.success("Tool deleted") 
 }) => {
   return (
     <Card className="mt-4 border-t-4 border-t-primary">
@@ -28,10 +30,16 @@ export const GeneratedToolCard: React.FC<GeneratedToolCardProps> = ({
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline" onClick={() => toast.success("Tool downloaded")}>
-          <Download className="mr-2 h-4 w-4" />
-          Download
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => toast.success("Tool downloaded")}>
+            <Download className="mr-2 h-4 w-4" />
+            Download
+          </Button>
+          <Button variant="outline" onClick={onDelete}>
+            <Trash className="mr-2 h-4 w-4" />
+            Delete
+          </Button>
+        </div>
         <Button onClick={onSave}>
           <ArrowRight className="mr-2 h-4 w-4" />
           Save to Library
