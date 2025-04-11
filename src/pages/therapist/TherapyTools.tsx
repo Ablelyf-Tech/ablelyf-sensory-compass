@@ -10,12 +10,14 @@ import { TherapyToolsHeader } from '@/components/therapist/tools/TherapyToolsHea
 import { TherapyToolTypes } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Brain, Activity, Eye, Move, MessageCircle, Smile, Hand, Lightbulb, ArrowRight } from 'lucide-react';
+import { CreateToolDialog } from '@/components/therapist/tools/CreateToolDialog';
 
 const TherapyTools = () => {
   const [activeTab, setActiveTab] = useState('browse');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState<TherapyToolTypes | 'all'>('all');
   const navigate = useNavigate();
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
   const categories = [
     { path: '/therapy-tools/assessment', name: 'Assessment Tools', icon: Activity, description: 'Evaluation and screening tools', color: 'bg-blue-50 border-blue-200' },
@@ -32,9 +34,16 @@ const TherapyTools = () => {
     navigate(path);
   };
 
+  const handleOpenCreateDialog = () => {
+    setIsCreateDialogOpen(true);
+  };
+
   return (
     <div className="space-y-6">
-      <TherapyToolsHeader />
+      <TherapyToolsHeader
+        activeTab={activeTab as 'browse' | 'create'}
+        setActiveTab={(tab) => setActiveTab(tab)}
+      />
 
       <Tabs defaultValue="categories" className="w-full">
         <TabsList className="grid w-full max-w-md grid-cols-3">
@@ -79,9 +88,14 @@ const TherapyTools = () => {
         </TabsContent>
 
         <TabsContent value="create" className="mt-6">
-          <CreateToolsTab />
+          <CreateToolsTab onOpenCreateDialog={handleOpenCreateDialog} />
         </TabsContent>
       </Tabs>
+
+      <CreateToolDialog 
+        open={isCreateDialogOpen} 
+        onOpenChange={setIsCreateDialogOpen} 
+      />
     </div>
   );
 };
