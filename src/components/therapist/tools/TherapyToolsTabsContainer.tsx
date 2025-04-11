@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TherapyCategoriesGrid } from './TherapyCategoriesGrid';
 import { BrowseToolsTab } from './BrowseToolsTab';
 import { CreateToolsTab } from './CreateToolsTab';
-import { AIToolsLibrary } from './ai/AIToolsLibrary';
+import { AIToolsLibrary } from '@/components/therapist/tools/AIToolsLibrary';
 import { TherapyToolTypes } from '@/types';
 
 interface TherapyToolsTabsContainerProps {
