@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { PageTemplate } from "@/components/shared/PageTemplate";
 import { Button } from "@/components/ui/button";
@@ -35,9 +34,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Certification, UserCertification } from "@/types/certifications";
 
 // Mock certifications data
-const mockCertifications = [
+const mockCertifications: Certification[] = [
   {
     id: "1",
     name: "Sensory Processing Specialist",
@@ -91,7 +91,7 @@ const mockCertifications = [
 ];
 
 // Mock user certifications
-const mockUserCertifications = [
+const mockUserCertifications: UserCertification[] = [
   {
     id: "1",
     userId: "1",
@@ -172,13 +172,13 @@ type CertificationFormValues = z.infer<typeof certificationFormSchema>;
 type UserCertificationFormValues = z.infer<typeof userCertificationFormSchema>;
 
 const Certifications: React.FC = () => {
-  const [certifications, setCertifications] = useState(mockCertifications);
-  const [userCertifications, setUserCertifications] = useState(mockUserCertifications);
-  const [filteredCertifications, setFilteredCertifications] = useState(mockCertifications);
-  const [filteredUserCertifications, setFilteredUserCertifications] = useState(mockUserCertifications);
+  const [certifications, setCertifications] = useState<Certification[]>(mockCertifications);
+  const [userCertifications, setUserCertifications] = useState<UserCertification[]>(mockUserCertifications);
+  const [filteredCertifications, setFilteredCertifications] = useState<Certification[]>(mockCertifications);
+  const [filteredUserCertifications, setFilteredUserCertifications] = useState<UserCertification[]>(mockUserCertifications);
   const [isAddCertificationOpen, setIsAddCertificationOpen] = useState(false);
   const [isAssignCertificationOpen, setIsAssignCertificationOpen] = useState(false);
-  const [selectedCertification, setSelectedCertification] = useState<typeof mockCertifications[0] | null>(null);
+  const [selectedCertification, setSelectedCertification] = useState<Certification | null>(null);
   const [activeTab, setActiveTab] = useState("all-certifications");
   const { toast } = useToast();
 
@@ -255,7 +255,7 @@ const Certifications: React.FC = () => {
   };
 
   const handleAddCertification = (data: CertificationFormValues) => {
-    const newCertification = {
+    const newCertification: Certification = {
       id: Math.random().toString(36).substring(2, 9),
       ...data,
     };
@@ -284,7 +284,7 @@ const Certifications: React.FC = () => {
       return;
     }
 
-    const newUserCertification = {
+    const newUserCertification: UserCertification = {
       id: Math.random().toString(36).substring(2, 9),
       userId: data.userId,
       userName: selectedUser.userName,
@@ -307,7 +307,7 @@ const Certifications: React.FC = () => {
     });
   };
 
-  const viewCertificationDetails = (certification: typeof mockCertifications[0]) => {
+  const viewCertificationDetails = (certification: Certification) => {
     setSelectedCertification(certification);
   };
 
