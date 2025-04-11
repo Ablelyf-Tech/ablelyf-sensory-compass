@@ -5,13 +5,17 @@ import ClassroomHeader from '@/components/teacher/classroom/ClassroomHeader';
 import ClassroomSearch from '@/components/teacher/classroom/ClassroomSearch';
 import StudentsList from '@/components/teacher/classroom/StudentsList';
 import { mockStudents } from '@/components/teacher/classroom/mockData';
+import { StudentFormValues } from '@/components/teacher/classroom/StudentDetailForm';
+import { toast } from 'sonner';
+import { Student } from '@/components/teacher/classroom/types';
 
 const Classroom = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const [students, setStudents] = useState(mockStudents);
   
   // Filter students based on search term and active tab
-  const filteredStudents = mockStudents.filter(student => {
+  const filteredStudents = students.filter(student => {
     const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         student.status.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -25,10 +29,32 @@ const Classroom = () => {
 
   // Calculate stats for the header
   const stats = {
-    total: 26, // Example total value
-    iep: 8,
-    plan504: 5,
-    evaluation: 3
+    total: students.length,
+    iep: students.filter(s => s.status === 'Active IEP').length,
+    plan504: students.filter(s => s.status === 'Active 504').length,
+    evaluation: students.filter(s => s.status === 'Under Evaluation').length
+  };
+
+  const handleAddStudent = (data: StudentFormValues) => {
+    // Convert accommodations string to array
+    const accommodations = data.accommodations
+      ? data.accommodations.split(',').map(item => item.trim())
+      : [];
+    
+    // Create new student object
+    const newStudent: Student = {
+      id: students.length + 1,
+      name: data.name,
+      age: data.age,
+      grade: data.grade,
+      accommodations: accommodations,
+      status: data.status,
+      lastAssessment: data.lastAssessment || '',
+    };
+    
+    // Add to students list
+    setStudents([...students, newStudent]);
+    toast.success(`Student ${data.name} added successfully!`);
   };
 
   return (
@@ -38,6 +64,7 @@ const Classroom = () => {
       <ClassroomSearch 
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
+        onAddStudent={handleAddStudent}
       />
 
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
