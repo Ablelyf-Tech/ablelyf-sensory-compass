@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Filter, Search, Calendar as CalendarIcon, X } from "lucide-react";
+import { DateRange } from "react-day-picker";
 
 interface FilterOption {
   id: string;
@@ -28,7 +29,7 @@ interface SearchAndFilterProps {
   searchPlaceholder?: string;
   filterOptions?: FilterOption[];
   onFilter?: (filters: Record<string, string>) => void;
-  onDateFilter?: (dates: { from?: Date; to?: Date }) => void;
+  onDateFilter?: (dates: DateRange | undefined) => void;
   showDateFilter?: boolean;
 }
 
@@ -42,7 +43,7 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Record<string, string>>({});
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date }>({});
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const handleSearch = () => {
@@ -61,19 +62,19 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     if (onFilter) onFilter(newFilters);
   };
 
-  const handleDateSelection = (range: { from?: Date; to?: Date }) => {
+  const handleDateSelection = (range: DateRange | undefined) => {
     setDateRange(range);
     if (onDateFilter) onDateFilter(range);
   };
 
   const clearFilters = () => {
     setFilters({});
-    setDateRange({});
+    setDateRange(undefined);
     if (onFilter) onFilter({});
-    if (onDateFilter) onDateFilter({});
+    if (onDateFilter) onDateFilter(undefined);
   };
 
-  const hasActiveFilters = Object.keys(filters).length > 0 || dateRange.from || dateRange.to;
+  const hasActiveFilters = Object.keys(filters).length > 0 || (dateRange && dateRange.from);
 
   return (
     <div className="space-y-4">
@@ -223,17 +224,17 @@ export const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
             );
           })}
           
-          {(dateRange.from || dateRange.to) && (
+          {dateRange && dateRange.from && (
             <div className="flex items-center bg-ablelyf-blue-50 text-ablelyf-blue-800 px-2 py-1 rounded-full text-xs">
               <span>
-                Date: {dateRange.from?.toLocaleDateString() || "Any"} to{" "}
-                {dateRange.to?.toLocaleDateString() || "Any"}
+                Date: {dateRange.from.toLocaleDateString()} to{" "}
+                {dateRange.to ? dateRange.to.toLocaleDateString() : "Any"}
               </span>
               <X
                 className="h-3 w-3 ml-1 cursor-pointer"
                 onClick={() => {
-                  setDateRange({});
-                  if (onDateFilter) onDateFilter({});
+                  setDateRange(undefined);
+                  if (onDateFilter) onDateFilter(undefined);
                 }}
               />
             </div>
