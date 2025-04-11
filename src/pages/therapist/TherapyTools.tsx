@@ -9,8 +9,9 @@ import { TherapyToolsNavigation } from '@/components/therapist/tools/TherapyTool
 import { TherapyToolsHeader } from '@/components/therapist/tools/TherapyToolsHeader';
 import { TherapyToolTypes } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Brain, Activity, Eye, Move, MessageCircle, Smile, Hand, Lightbulb, ArrowRight } from 'lucide-react';
+import { Brain, Activity, Eye, Move, MessageCircle, Smile, Hand, Lightbulb, ArrowRight, Sparkles } from 'lucide-react';
 import { CreateToolDialog } from '@/components/therapist/tools/CreateToolDialog';
+import { AIToolsLibrary } from '@/components/therapist/tools/AIToolsLibrary';
 
 const TherapyTools = () => {
   const [activeTab, setActiveTab] = useState('browse');
@@ -46,9 +47,10 @@ const TherapyTools = () => {
       />
 
       <Tabs defaultValue="categories" className="w-full">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+        <TabsList className="grid w-full max-w-md grid-cols-4">
           <TabsTrigger value="categories">Categories</TabsTrigger>
           <TabsTrigger value="browse">Browse All</TabsTrigger>
+          <TabsTrigger value="ai">AI Library</TabsTrigger>
           <TabsTrigger value="create">Create New</TabsTrigger>
         </TabsList>
 
@@ -85,6 +87,10 @@ const TherapyTools = () => {
             activeCategory={activeCategory}
             handleCategoryChange={setActiveCategory}
           />
+        </TabsContent>
+
+        <TabsContent value="ai" className="mt-6">
+          <AIToolsLibrary />
         </TabsContent>
 
         <TabsContent value="create" className="mt-6">
