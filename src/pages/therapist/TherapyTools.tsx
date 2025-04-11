@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Brain, Activity, Eye, Move, MessageCircle, Smile, Hand, Lightbulb, ArrowRight, Sparkles } from 'lucide-react';
 import { CreateToolDialog } from '@/components/therapist/tools/CreateToolDialog';
 import { AIToolsLibrary } from '@/components/therapist/tools/AIToolsLibrary';
+import { CategoryAIGenerator } from '@/components/therapist/tools/CategoryAIGenerator';
 
 const TherapyTools = () => {
   const [activeTab, setActiveTab] = useState('browse');
@@ -19,6 +20,8 @@ const TherapyTools = () => {
   const [activeCategory, setActiveCategory] = useState<TherapyToolTypes | 'all'>('all');
   const navigate = useNavigate();
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isAIGeneratorOpen, setIsAIGeneratorOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<TherapyToolTypes | null>(null);
 
   const categories = [
     { path: '/therapy-tools/assessment', name: 'Assessment Tools', icon: Activity, description: 'Evaluation and screening tools', color: 'bg-blue-50 border-blue-200' },
@@ -37,6 +40,11 @@ const TherapyTools = () => {
 
   const handleOpenCreateDialog = () => {
     setIsCreateDialogOpen(true);
+  };
+
+  const openAIGeneratorForCategory = (category: TherapyToolTypes) => {
+    setSelectedCategory(category);
+    setIsAIGeneratorOpen(true);
   };
 
   return (
@@ -65,12 +73,29 @@ const TherapyTools = () => {
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-center">
                     <category.icon className="h-8 w-8 text-muted-foreground" />
-                    <Button variant="ghost" size="icon" onClick={(e) => {
-                      e.stopPropagation();
-                      navigateToCategory(category.path);
-                    }}>
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8 rounded-full"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openAIGeneratorForCategory(category.path.split('/').pop() as TherapyToolTypes);
+                        }}
+                      >
+                        <Sparkles className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigateToCategory(category.path);
+                        }}
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                   <CardTitle className="text-lg mt-2">{category.name}</CardTitle>
                   <CardDescription>{category.description}</CardDescription>
@@ -102,6 +127,14 @@ const TherapyTools = () => {
         open={isCreateDialogOpen} 
         onOpenChange={setIsCreateDialogOpen} 
       />
+
+      {selectedCategory && (
+        <CategoryAIGenerator
+          open={isAIGeneratorOpen}
+          onOpenChange={setIsAIGeneratorOpen}
+          category={selectedCategory}
+        />
+      )}
     </div>
   );
 };
