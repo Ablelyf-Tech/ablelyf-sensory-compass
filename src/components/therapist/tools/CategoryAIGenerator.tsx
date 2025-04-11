@@ -14,105 +14,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { TherapyToolTypes } from '@/types';
-import { Sparkles, Download, ArrowRight } from 'lucide-react';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Sparkles } from 'lucide-react';
+import { categoryPrompts } from './ai/CategoryPromptsData';
+import { PromptExamples } from './ai/PromptExamples';
+import { GeneratedToolCard } from './ai/GeneratedToolCard';
+import { GeneratingToolSkeleton } from './ai/GeneratingToolSkeleton';
+import { GeneratedCategoryTool } from './ai/CategoryAITypes';
 
 interface CategoryAIGeneratorProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   category: TherapyToolTypes;
 }
-
-interface CategoryPrompt {
-  category: TherapyToolTypes;
-  title: string;
-  description: string;
-  examples: string[];
-}
-
-const categoryPrompts: Record<TherapyToolTypes, CategoryPrompt> = {
-  assessment: {
-    category: 'assessment',
-    title: 'Assessment Tools Generator',
-    description: 'Generate customized assessment tools, questionnaires, and evaluation forms',
-    examples: [
-      'Create a sensory processing assessment for a 5-year-old',
-      'Generate a communication skills checklist for teenagers',
-      'Design a behavioral observation form for classroom settings'
-    ]
-  },
-  visual: {
-    category: 'visual',
-    title: 'Visual Supports Generator',
-    description: 'Create visual schedules, communication boards, and other visual aids',
-    examples: [
-      'Design a morning routine visual schedule for a child with autism',
-      'Create a feelings identification chart with realistic photos',
-      'Generate a visual communication board for non-verbal children'
-    ]
-  },
-  motor: {
-    category: 'motor',
-    title: 'Motor Skills Activities Generator',
-    description: 'Generate fine and gross motor skill development activities',
-    examples: [
-      'Create fine motor activities using household items for preschoolers',
-      'Design a gross motor obstacle course for a small therapy room',
-      'Generate hand-strengthening exercises for a child with poor pencil grip'
-    ]
-  },
-  communication: {
-    category: 'communication',
-    title: 'Communication Tools Generator',
-    description: 'Create speech, language, and communication development resources',
-    examples: [
-      'Generate conversation starter cards for social skills groups',
-      'Create articulation practice activities for the "r" sound',
-      'Design a communication board for a child with limited verbal skills'
-    ]
-  },
-  behavioral: {
-    category: 'behavioral',
-    title: 'Behavioral Tools Generator',
-    description: 'Create behavior management strategies and intervention tools',
-    examples: [
-      'Generate a token economy system for classroom behavior management',
-      'Create a behavior tracking chart for home use',
-      'Design a social story about managing frustration'
-    ]
-  },
-  social: {
-    category: 'social',
-    title: 'Social Skills Tools Generator',
-    description: 'Create social interaction and emotional learning resources',
-    examples: [
-      'Generate conversation topic cards for teens with social anxiety',
-      'Create a feelings identification activity with scenarios',
-      'Design a friendship skills curriculum for small groups'
-    ]
-  },
-  sensory: {
-    category: 'sensory',
-    title: 'Sensory Processing Tools Generator',
-    description: 'Create sensory integration activities and resources',
-    examples: [
-      'Generate a list of calming sensory activities for an overstimulated child',
-      'Create a sensory diet for a child with tactile defensiveness',
-      'Design a sensory-friendly classroom modifications guide'
-    ]
-  },
-  cognitive: {
-    category: 'cognitive',
-    title: 'Cognitive Skills Tools Generator',
-    description: 'Create problem-solving and executive function resources',
-    examples: [
-      'Generate executive functioning worksheets for teens',
-      'Create memory and attention activities for elementary students',
-      'Design a visual problem-solving sequence for daily challenges'
-    ]
-  }
-};
 
 export const CategoryAIGenerator: React.FC<CategoryAIGeneratorProps> = ({ 
   open, 
@@ -122,7 +35,7 @@ export const CategoryAIGenerator: React.FC<CategoryAIGeneratorProps> = ({
   const [prompt, setPrompt] = useState('');
   const [ageRange, setAgeRange] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedTool, setGeneratedTool] = useState<any>(null);
+  const [generatedTool, setGeneratedTool] = useState<GeneratedCategoryTool | null>(null);
   
   const promptInfo = categoryPrompts[category] || {
     category,
@@ -144,7 +57,7 @@ export const CategoryAIGenerator: React.FC<CategoryAIGeneratorProps> = ({
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // In a real implementation, this would call an API endpoint
-      const newTool = {
+      const newTool: GeneratedCategoryTool = {
         id: `ai-tool-${Date.now()}`,
         title: `AI Generated: ${prompt.slice(0, 30)}...`,
         description: `This is an AI-generated ${category} tool based on your specific requirements. It has been tailored for age range ${ageRange || 'all ages'}.`,
@@ -206,22 +119,10 @@ export const CategoryAIGenerator: React.FC<CategoryAIGeneratorProps> = ({
             />
           </div>
 
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Examples</p>
-            <div className="flex flex-wrap gap-2">
-              {promptInfo.examples.map((example, index) => (
-                <Button
-                  key={index}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleExampleClick(example)}
-                  className="text-xs"
-                >
-                  {example}
-                </Button>
-              ))}
-            </div>
-          </div>
+          <PromptExamples 
+            promptInfo={promptInfo} 
+            onExampleClick={handleExampleClick} 
+          />
 
           <Button 
             onClick={handleGenerate} 
@@ -232,45 +133,13 @@ export const CategoryAIGenerator: React.FC<CategoryAIGeneratorProps> = ({
             <Sparkles className="ml-2 h-4 w-4" />
           </Button>
 
-          {isGenerating && (
-            <Card className="mt-4">
-              <CardHeader>
-                <Skeleton className="h-4 w-48 mb-2" />
-                <Skeleton className="h-3 w-full" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-24 w-full rounded-md" />
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Skeleton className="h-9 w-28" />
-                <Skeleton className="h-9 w-28" />
-              </CardFooter>
-            </Card>
-          )}
+          {isGenerating && <GeneratingToolSkeleton />}
 
           {!isGenerating && generatedTool && (
-            <Card className="mt-4 border-t-4 border-t-primary">
-              <CardHeader>
-                <h3 className="text-lg font-semibold">{generatedTool.title}</h3>
-                <p className="text-sm text-muted-foreground">{generatedTool.description}</p>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-muted p-4 rounded-md">
-                  <p className="font-medium mb-2">Generated Content:</p>
-                  <p className="text-sm">{generatedTool.content}</p>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={() => toast.success("Tool downloaded")}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Download
-                </Button>
-                <Button onClick={handleSave}>
-                  <ArrowRight className="mr-2 h-4 w-4" />
-                  Save to Library
-                </Button>
-              </CardFooter>
-            </Card>
+            <GeneratedToolCard 
+              tool={generatedTool}
+              onSave={handleSave}
+            />
           )}
         </div>
 
