@@ -9,7 +9,7 @@ import { TherapyToolsTabsContainer } from '@/components/therapist/tools/TherapyT
 import { therapyCategories } from '@/components/therapist/tools/TherapyCategoryData';
 
 const TherapyTools = () => {
-  const [activeTab, setActiveTab] = useState('browse');
+  const [activeTab, setActiveTab] = useState<'browse' | 'create'>('browse');
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState<TherapyToolTypes | 'all'>('all');
   const navigate = useNavigate();
@@ -33,8 +33,8 @@ const TherapyTools = () => {
   return (
     <div className="space-y-6">
       <TherapyToolsHeader
-        activeTab={activeTab as 'browse' | 'create'}
-        setActiveTab={(tab) => setActiveTab(tab)}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
       />
 
       <TherapyToolsTabsContainer

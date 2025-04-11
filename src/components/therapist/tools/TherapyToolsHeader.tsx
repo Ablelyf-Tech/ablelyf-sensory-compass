@@ -1,8 +1,8 @@
 
 import React from 'react';
-import { TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-export interface TherapyToolsHeaderProps {
+interface TherapyToolsHeaderProps {
   activeTab: 'browse' | 'create';
   setActiveTab: (tab: 'browse' | 'create') => void;
 }
@@ -12,29 +12,18 @@ export const TherapyToolsHeader: React.FC<TherapyToolsHeaderProps> = ({
   setActiveTab
 }) => {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex flex-col sm:flex-row items-start justify-between gap-4 mb-4">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Therapy Tools</h1>
-        <p className="text-muted-foreground">
-          Comprehensive collection of tools and activities for assessment and intervention
-        </p>
+        <h1 className="text-2xl font-bold text-ablelyf-blue-900">Therapy Tools</h1>
+        <p className="text-muted-foreground">Browse, create, and manage therapy resources</p>
       </div>
-      <TabsList>
-        <TabsTrigger 
-          value="browse" 
-          onClick={() => setActiveTab('browse')}
-          data-state={activeTab === 'browse' ? 'active' : 'inactive'}
-        >
-          Browse
-        </TabsTrigger>
-        <TabsTrigger 
-          value="create"
-          onClick={() => setActiveTab('create')}
-          data-state={activeTab === 'create' ? 'active' : 'inactive'}
-        >
-          Create
-        </TabsTrigger>
-      </TabsList>
+      
+      <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'browse' | 'create')}>
+        <TabsList className="grid w-full max-w-xs grid-cols-2">
+          <TabsTrigger value="browse">Browse Tools</TabsTrigger>
+          <TabsTrigger value="create">Create Tool</TabsTrigger>
+        </TabsList>
+      </Tabs>
     </div>
   );
 };
