@@ -1,28 +1,12 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Filter, Plus, Download, LineChart, FileText, Calendar, Edit, Trash } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, Legend,
-  PieChart, Pie, Cell
-} from 'recharts';
 import { toast } from 'sonner';
-import ReportForm from '@/components/teacher/progress/ReportForm';
-import GoalForm from '@/components/teacher/progress/GoalForm';
 import { Goal, ProgressReport } from '@/components/teacher/classroom/types';
+import StudentListSidebar from '@/components/teacher/progress/StudentListSidebar';
+import StudentDetailPanel from '@/components/teacher/progress/StudentDetailPanel';
+import StudentGoalsList from '@/components/teacher/progress/StudentGoalsList';
+import ProgressReportsSearch from '@/components/teacher/progress/ProgressReportsSearch';
+import ProgressReportDialogs from '@/components/teacher/progress/ProgressReportDialogs';
 
 const ProgressReports = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -340,303 +324,70 @@ const ProgressReports = () => {
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input 
-            placeholder="Search students..." 
-            className="pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="sm:w-auto">
-            <Filter className="mr-2 h-4 w-4" />
-            Filter
-          </Button>
-          <Button className="sm:w-auto" onClick={handleNewReport}>
-            <Plus className="mr-2 h-4 w-4" />
-            New Report
-          </Button>
-        </div>
-      </div>
+      <ProgressReportsSearch 
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        handleNewReport={handleNewReport}
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Students</CardTitle>
-              <CardDescription>Select a student to view progress details</CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="space-y-1">
-                {filteredStudents.length === 0 ? (
-                  <div className="p-4 text-center">
-                    <p>No students match your search criteria.</p>
-                  </div>
-                ) : (
-                  filteredStudents.map(student => (
-                    <div 
-                      key={student.id}
-                      className={`px-4 py-3 flex justify-between items-center hover:bg-slate-50 cursor-pointer border-l-2 ${selectedStudent?.id === student.id ? 'border-l-primary bg-slate-50' : 'border-l-transparent'}`}
-                      onClick={() => setSelectedStudent(student)}
-                    >
-                      <div>
-                        <div className="font-medium">{student.name}</div>
-                        <div className="text-sm text-muted-foreground">{student.grade}</div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={getStatusColor(student.status)}>{student.status}</Badge>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </CardContent>
-          </Card>
+          <StudentListSidebar 
+            students={filteredStudents}
+            selectedStudent={selectedStudent}
+            setSelectedStudent={setSelectedStudent}
+            getStatusColor={getStatusColor}
+          />
         </div>
 
         <div className="lg:col-span-3">
           {selectedStudent ? (
             <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <CardTitle>{selectedStudent.name}</CardTitle>
-                      <CardDescription>{selectedStudent.grade} • {selectedStudent.status}</CardDescription>
-                    </div>
-                    <Badge variant="outline">Report Due: {selectedStudent.reportDue}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <Tabs 
-                    value={selectedReportType} 
-                    onValueChange={setSelectedReportType} 
-                    className="w-full"
-                  >
-                    <TabsList className="w-full grid grid-cols-4">
-                      <TabsTrigger value="goals">Goals</TabsTrigger>
-                      <TabsTrigger value="academics">Academics</TabsTrigger>
-                      <TabsTrigger value="behavior">Behavior</TabsTrigger>
-                      <TabsTrigger value="attendance">Attendance</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="goals" className="mt-4">
-                      <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            data={goalProgressData}
-                            margin={{
-                              top: 20,
-                              right: 30,
-                              left: 20,
-                              bottom: 5,
-                            }}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Bar dataKey="Current" fill="#8884d8" />
-                            <Bar dataKey="Target" fill="#82ca9d" />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="academics" className="mt-4">
-                      <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            data={academicData}
-                            margin={{
-                              top: 20,
-                              right: 30,
-                              left: 20,
-                              bottom: 5,
-                            }}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="subject" />
-                            <YAxis domain={[0, 100]} />
-                            <Tooltip />
-                            <Bar dataKey="score" fill="#60a5fa" />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="behavior" className="mt-4">
-                      <div className="space-y-4">
-                        {selectedStudent.behavior.map((item, index) => (
-                          <div key={index} className="space-y-2">
-                            <div className="flex justify-between items-center">
-                              <span>{item.category}</span>
-                              <span>{item.score}/{item.outOf}</span>
-                            </div>
-                            <Progress value={(item.score / item.outOf) * 100} />
-                          </div>
-                        ))}
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="attendance" className="mt-4">
-                      <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={attendanceData}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                              outerRadius={80}
-                              fill="#8884d8"
-                              dataKey="value"
-                            >
-                              {attendanceData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                            <Tooltip />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-                </CardContent>
-                <CardFooter className="flex gap-2">
-                  <Button onClick={handleGenerateReport}>
-                    <FileText className="mr-2 h-4 w-4" />
-                    Generate Report
-                  </Button>
-                  <Button variant="outline">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Data
-                  </Button>
-                  <Button variant="outline">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Schedule Review
-                  </Button>
-                </CardFooter>
-              </Card>
+              <StudentDetailPanel 
+                selectedStudent={selectedStudent}
+                selectedReportType={selectedReportType}
+                setSelectedReportType={setSelectedReportType}
+                goalProgressData={goalProgressData}
+                attendanceData={attendanceData}
+                academicData={academicData}
+                handleGenerateReport={handleGenerateReport}
+              />
 
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Progress Toward Goals</h3>
-                  <Button size="sm" variant="outline" onClick={handleAddGoal}>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Goal
-                  </Button>
-                </div>
-                
-                {selectedStudent.goals.length === 0 ? (
-                  <Card>
-                    <CardContent className="p-6 text-center">
-                      <p className="text-muted-foreground">No goals have been set for this student yet.</p>
-                      <Button className="mt-4" onClick={handleAddGoal}>Add First Goal</Button>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  selectedStudent.goals.map(goal => (
-                    <Card key={goal.id}>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-base">{goal.name}</CardTitle>
-                        <CardDescription className="text-sm">{goal.target}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center text-sm">
-                            <span>Progress</span>
-                            <span>{goal.progress}%</span>
-                          </div>
-                          <Progress value={goal.progress} />
-                        </div>
-                      </CardContent>
-                      <CardFooter className="pt-0 flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => handleUpdateProgress(goal.id)}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Update
-                        </Button>
-                        <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteGoal(goal.id)}>
-                          <Trash className="mr-2 h-4 w-4" />
-                          Delete
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))
-                )}
-              </div>
+              <StudentGoalsList 
+                selectedStudent={selectedStudent}
+                handleAddGoal={handleAddGoal}
+                handleUpdateProgress={handleUpdateProgress}
+                handleDeleteGoal={handleDeleteGoal}
+              />
             </div>
           ) : (
-            <Card>
-              <CardContent className="p-6 text-center">
-                <LineChart className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-medium mb-2">Select a Student</h3>
-                <p className="text-muted-foreground">
-                  Please select a student from the list to view their progress details.
-                </p>
-              </CardContent>
-            </Card>
+            <StudentDetailPanel 
+              selectedStudent={null}
+              selectedReportType={selectedReportType}
+              setSelectedReportType={setSelectedReportType}
+              goalProgressData={[]}
+              attendanceData={[]}
+              academicData={[]}
+              handleGenerateReport={handleGenerateReport}
+            />
           )}
         </div>
       </div>
 
-      {/* New Report Dialog */}
-      <Dialog open={isNewReportOpen} onOpenChange={setIsNewReportOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Create Progress Report</DialogTitle>
-          </DialogHeader>
-          {selectedStudent && (
-            <ReportForm
-              students={students.map(s => ({ id: s.id, name: s.name }))}
-              onSubmit={handleReportSubmit}
-              onCancel={() => setIsNewReportOpen(false)}
-              studentId={selectedStudent.id}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Goal Dialog */}
-      <Dialog open={isAddGoalOpen} onOpenChange={setIsAddGoalOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Add New Goal</DialogTitle>
-          </DialogHeader>
-          {selectedStudent && (
-            <GoalForm
-              studentId={selectedStudent.id}
-              onSubmit={handleGoalSubmit}
-              onCancel={() => setIsAddGoalOpen(false)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Goal Dialog */}
-      <Dialog open={isEditGoalOpen} onOpenChange={setIsEditGoalOpen}>
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle>Edit Goal</DialogTitle>
-          </DialogHeader>
-          {selectedStudent && currentGoal && (
-            <GoalForm
-              goal={currentGoal}
-              studentId={selectedStudent.id}
-              onSubmit={handleEditGoalSubmit}
-              onCancel={() => {
-                setIsEditGoalOpen(false);
-                setCurrentGoal(null);
-              }}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      <ProgressReportDialogs 
+        isNewReportOpen={isNewReportOpen}
+        setIsNewReportOpen={setIsNewReportOpen}
+        isAddGoalOpen={isAddGoalOpen}
+        setIsAddGoalOpen={setIsAddGoalOpen}
+        isEditGoalOpen={isEditGoalOpen}
+        setIsEditGoalOpen={setIsEditGoalOpen}
+        currentGoal={currentGoal}
+        selectedStudent={selectedStudent}
+        students={students}
+        handleReportSubmit={handleReportSubmit}
+        handleGoalSubmit={handleGoalSubmit}
+        handleEditGoalSubmit={handleEditGoalSubmit}
+      />
     </div>
   );
 };
