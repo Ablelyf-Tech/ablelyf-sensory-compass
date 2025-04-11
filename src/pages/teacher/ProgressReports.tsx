@@ -9,19 +9,32 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
   ResponsiveContainer, Legend,
   PieChart, Pie, Cell
 } from 'recharts';
 import { toast } from 'sonner';
+import ReportForm from '@/components/teacher/progress/ReportForm';
+import GoalForm from '@/components/teacher/progress/GoalForm';
+import { Goal, ProgressReport } from '@/components/teacher/classroom/types';
 
 const ProgressReports = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedReportType, setSelectedReportType] = useState('goals');
+  const [isNewReportOpen, setIsNewReportOpen] = useState(false);
+  const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
+  const [isEditGoalOpen, setIsEditGoalOpen] = useState(false);
+  const [currentGoal, setCurrentGoal] = useState(null);
   
   // Mock student data with goals
-  const students = [
+  const [students, setStudents] = useState([
     { 
       id: 1, 
       name: 'Jamie Rodriguez', 
@@ -99,7 +112,10 @@ const ProgressReports = () => {
       },
       reportDue: '2025-04-30'
     },
-  ];
+  ]);
+
+  // Track progress reports
+  const [progressReports, setProgressReports] = useState<ProgressReport[]>([]);
 
   // Filter students based on search term
   const filteredStudents = students.filter(student => 
@@ -144,7 +160,11 @@ const ProgressReports = () => {
   ] : [];
 
   const handleNewReport = () => {
-    toast.success('New report functionality coming soon!');
+    if (!selectedStudent) {
+      toast.error('Please select a student first to create a new report');
+      return;
+    }
+    setIsNewReportOpen(true);
   };
 
   const handleGenerateReport = () => {
@@ -152,16 +172,163 @@ const ProgressReports = () => {
       toast.error('Please select a student first');
       return;
     }
-    toast.success(`Generating report for ${selectedStudent.name}`);
+    
+    // In a real app, this would generate and show a PDF report
+    toast.success(`Report generated for ${selectedStudent.name}`);
+    
+    // Sample code to add to reports array
+    const newReport: ProgressReport = {
+      id: progressReports.length + 1,
+      title: `Progress Report for ${selectedStudent.name}`,
+      studentId: selectedStudent.id,
+      reportType: 'quarterly',
+      date: new Date().toISOString(),
+      period: 'q1',
+      summary: `Overall progress for ${selectedStudent.name} this quarter`,
+      academicProgress: 'Student is making steady academic progress',
+      behavioralProgress: 'Behavior is improving in classroom settings',
+      socialProgress: 'Social skills continue to develop positively'
+    };
+    
+    setProgressReports([...progressReports, newReport]);
+  };
+
+  const handleReportSubmit = (data) => {
+    // Create a new report using the form data
+    const newReport: ProgressReport = {
+      id: progressReports.length + 1,
+      title: data.title,
+      studentId: selectedStudent.id,
+      reportType: data.reportType,
+      date: data.date,
+      period: data.period,
+      summary: data.summary,
+      academicProgress: data.academicProgress,
+      behavioralProgress: data.behavioralProgress,
+      socialProgress: data.socialProgress,
+      recommendations: data.recommendations
+    };
+    
+    setProgressReports([...progressReports, newReport]);
+    setIsNewReportOpen(false);
+    toast.success('Progress report created successfully');
   };
 
   const handleUpdateProgress = (goalId) => {
-    toast.success(`Updating progress for goal ID: ${goalId}`);
+    if (!selectedStudent) return;
+    
+    // Find the goal to edit
+    const goalToEdit = selectedStudent.goals.find(goal => goal.id === goalId);
+    if (goalToEdit) {
+      setCurrentGoal(goalToEdit);
+      setIsEditGoalOpen(true);
+    }
   };
 
   const handleDeleteGoal = (goalId) => {
-    toast.success(`Goal ID: ${goalId} deleted`);
-    // In a real application, you would update the state or make an API call here
+    if (!selectedStudent) return;
+    
+    // Ask for confirmation before deleting
+    const confirmDelete = window.confirm('Are you sure you want to delete this goal?');
+    if (!confirmDelete) return;
+    
+    // Create a new array of students with the updated goals
+    const updatedStudents = students.map(student => {
+      if (student.id === selectedStudent.id) {
+        return {
+          ...student,
+          goals: student.goals.filter(goal => goal.id !== goalId)
+        };
+      }
+      return student;
+    });
+    
+    setStudents(updatedStudents);
+    
+    // Update selected student
+    const updatedStudent = updatedStudents.find(student => student.id === selectedStudent.id);
+    setSelectedStudent(updatedStudent);
+    
+    toast.success('Goal successfully deleted');
+  };
+
+  const handleAddGoal = () => {
+    if (!selectedStudent) {
+      toast.error('Please select a student first');
+      return;
+    }
+    setIsAddGoalOpen(true);
+  };
+
+  const handleGoalSubmit = (data) => {
+    if (!selectedStudent) return;
+    
+    // Create a new goal
+    const newGoal: Goal = {
+      id: Math.max(0, ...selectedStudent.goals.map(g => g.id)) + 1,
+      name: data.name,
+      progress: data.progress,
+      target: data.target,
+      category: data.category,
+      notes: data.notes
+    };
+    
+    // Update students with the new goal
+    const updatedStudents = students.map(student => {
+      if (student.id === selectedStudent.id) {
+        return {
+          ...student,
+          goals: [...student.goals, newGoal]
+        };
+      }
+      return student;
+    });
+    
+    setStudents(updatedStudents);
+    
+    // Update selected student
+    const updatedStudent = updatedStudents.find(student => student.id === selectedStudent.id);
+    setSelectedStudent(updatedStudent);
+    
+    setIsAddGoalOpen(false);
+    toast.success('New goal added successfully');
+  };
+
+  const handleEditGoalSubmit = (data) => {
+    if (!selectedStudent || !currentGoal) return;
+    
+    // Update the goal
+    const updatedStudents = students.map(student => {
+      if (student.id === selectedStudent.id) {
+        return {
+          ...student,
+          goals: student.goals.map(goal => {
+            if (goal.id === currentGoal.id) {
+              return {
+                ...goal,
+                name: data.name,
+                progress: data.progress,
+                target: data.target,
+                category: data.category,
+                notes: data.notes
+              };
+            }
+            return goal;
+          })
+        };
+      }
+      return student;
+    });
+    
+    setStudents(updatedStudents);
+    
+    // Update selected student
+    const updatedStudent = updatedStudents.find(student => student.id === selectedStudent.id);
+    setSelectedStudent(updatedStudent);
+    
+    setIsEditGoalOpen(false);
+    setCurrentGoal(null);
+    toast.success('Goal updated successfully');
   };
 
   return (
@@ -360,39 +527,48 @@ const ProgressReports = () => {
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Progress Toward Goals</h3>
-                  <Button size="sm" variant="outline">
+                  <Button size="sm" variant="outline" onClick={handleAddGoal}>
                     <Plus className="mr-2 h-4 w-4" />
                     Add Goal
                   </Button>
                 </div>
                 
-                {selectedStudent.goals.map(goal => (
-                  <Card key={goal.id}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-base">{goal.name}</CardTitle>
-                      <CardDescription className="text-sm">{goal.target}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center text-sm">
-                          <span>Progress</span>
-                          <span>{goal.progress}%</span>
-                        </div>
-                        <Progress value={goal.progress} />
-                      </div>
+                {selectedStudent.goals.length === 0 ? (
+                  <Card>
+                    <CardContent className="p-6 text-center">
+                      <p className="text-muted-foreground">No goals have been set for this student yet.</p>
+                      <Button className="mt-4" onClick={handleAddGoal}>Add First Goal</Button>
                     </CardContent>
-                    <CardFooter className="pt-0 flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => handleUpdateProgress(goal.id)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Update
-                      </Button>
-                      <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteGoal(goal.id)}>
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete
-                      </Button>
-                    </CardFooter>
                   </Card>
-                ))}
+                ) : (
+                  selectedStudent.goals.map(goal => (
+                    <Card key={goal.id}>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">{goal.name}</CardTitle>
+                        <CardDescription className="text-sm">{goal.target}</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center text-sm">
+                            <span>Progress</span>
+                            <span>{goal.progress}%</span>
+                          </div>
+                          <Progress value={goal.progress} />
+                        </div>
+                      </CardContent>
+                      <CardFooter className="pt-0 flex gap-2">
+                        <Button variant="outline" size="sm" onClick={() => handleUpdateProgress(goal.id)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Update
+                        </Button>
+                        <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteGoal(goal.id)}>
+                          <Trash className="mr-2 h-4 w-4" />
+                          Delete
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))
+                )}
               </div>
             </div>
           ) : (
@@ -408,6 +584,59 @@ const ProgressReports = () => {
           )}
         </div>
       </div>
+
+      {/* New Report Dialog */}
+      <Dialog open={isNewReportOpen} onOpenChange={setIsNewReportOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Create Progress Report</DialogTitle>
+          </DialogHeader>
+          {selectedStudent && (
+            <ReportForm
+              students={students.map(s => ({ id: s.id, name: s.name }))}
+              onSubmit={handleReportSubmit}
+              onCancel={() => setIsNewReportOpen(false)}
+              studentId={selectedStudent.id}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Goal Dialog */}
+      <Dialog open={isAddGoalOpen} onOpenChange={setIsAddGoalOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Add New Goal</DialogTitle>
+          </DialogHeader>
+          {selectedStudent && (
+            <GoalForm
+              studentId={selectedStudent.id}
+              onSubmit={handleGoalSubmit}
+              onCancel={() => setIsAddGoalOpen(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Goal Dialog */}
+      <Dialog open={isEditGoalOpen} onOpenChange={setIsEditGoalOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Edit Goal</DialogTitle>
+          </DialogHeader>
+          {selectedStudent && currentGoal && (
+            <GoalForm
+              goal={currentGoal}
+              studentId={selectedStudent.id}
+              onSubmit={handleEditGoalSubmit}
+              onCancel={() => {
+                setIsEditGoalOpen(false);
+                setCurrentGoal(null);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
