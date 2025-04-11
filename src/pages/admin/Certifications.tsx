@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { PageTemplate } from "@/components/shared/PageTemplate";
 import { Button } from "@/components/ui/button";
@@ -255,9 +256,17 @@ const Certifications: React.FC = () => {
   };
 
   const handleAddCertification = (data: CertificationFormValues) => {
+    // Ensure all required properties are present with non-null assertions
+    // This is safe because the zod schema validation ensures these fields are present
     const newCertification: Certification = {
       id: Math.random().toString(36).substring(2, 9),
-      ...data,
+      name: data.name,
+      type: data.type,
+      category: data.category,
+      description: data.description,
+      requirements: data.requirements,
+      validityPeriod: data.validityPeriod,
+      issuedBy: data.issuedBy,
     };
 
     setCertifications([...certifications, newCertification]);
