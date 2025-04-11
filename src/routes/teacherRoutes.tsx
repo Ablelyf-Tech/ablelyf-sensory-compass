@@ -62,7 +62,9 @@ export const teacherRoutes = [
     path="/teacher-calendar" 
     element={
       <ProtectedRoute>
-        <TeacherCalendar />
+        <AppLayout>
+          <TeacherCalendar />
+        </AppLayout>
       </ProtectedRoute>
     } 
   />
