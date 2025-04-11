@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { LearningModuleForm } from '@/components/therapist/LearningModuleForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { toast } from 'sonner';
 
 // Mock learning modules data
 const mockModules = [
@@ -69,10 +71,11 @@ const mockModules = [
 ];
 
 const LearningModules: React.FC = () => {
-  const [searchTerm, setSearchTerm] = React.useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [modules, setModules] = useState(mockModules);
   
   // Filter modules based on search term
-  const filteredModules = mockModules.filter(module => 
+  const filteredModules = modules.filter(module => 
     module.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     module.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -104,6 +107,11 @@ const LearningModules: React.FC = () => {
   // Format skill area for display
   const formatSkillArea = (skillArea: string) => {
     return skillArea.charAt(0).toUpperCase() + skillArea.slice(1) + ' Skills';
+  };
+
+  const deleteModule = (id: string) => {
+    setModules(modules.filter(module => module.id !== id));
+    toast.success("Module deleted successfully");
   };
 
   const renderModuleList = (modules: typeof mockModules) => (
@@ -155,11 +163,19 @@ const LearningModules: React.FC = () => {
               </ScrollArea>
             </div>
             
-            <Button variant="outline" className="w-full mt-4">
-              <Book className="mr-2 h-4 w-4" />
-              View Module
-              <ArrowRight className="ml-auto h-4 w-4" />
-            </Button>
+            <div className="flex gap-2 mt-4">
+              <Button variant="outline" className="flex-1">
+                <Book className="mr-2 h-4 w-4" />
+                View Module
+              </Button>
+              <Button 
+                variant="outline" 
+                className="text-destructive hover:bg-destructive/10" 
+                onClick={() => deleteModule(module.id)}
+              >
+                Delete
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ))}

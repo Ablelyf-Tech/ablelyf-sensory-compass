@@ -8,13 +8,15 @@ interface TherapyModulesGridProps {
   onToggleFavorite: (id: string) => void;
   onDownload: (id: string) => void;
   onViewDetails: (tool: TherapyTool) => void;
+  onDelete?: (id: string) => void;
 }
 
 export const TherapyModulesGrid: React.FC<TherapyModulesGridProps> = ({
   tools,
   onToggleFavorite,
   onDownload,
-  onViewDetails
+  onViewDetails,
+  onDelete
 }) => {
   if (tools.length === 0) {
     return (
@@ -34,6 +36,7 @@ export const TherapyModulesGrid: React.FC<TherapyModulesGridProps> = ({
           onToggleFavorite={onToggleFavorite}
           onDownload={onDownload}
           onViewDetails={onViewDetails}
+          onDelete={onDelete}
         />
       ))}
     </div>

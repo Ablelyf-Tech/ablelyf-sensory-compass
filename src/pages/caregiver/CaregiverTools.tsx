@@ -9,14 +9,15 @@ import { TherapyModulesTabs } from '@/components/therapist/modules/TherapyModule
 import { TherapyModulesGrid } from '@/components/therapist/modules/TherapyModulesGrid';
 import { TherapyModuleDetails } from '@/components/therapist/modules/TherapyModuleDetails';
 import { filterTools } from '@/components/therapist/modules/therapyModulesUtils';
+import { toast } from 'sonner';
 
 const CaregiverTools = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState<TherapyToolTypes | 'all'>('sensory');
   const [selectedTool, setSelectedTool] = useState<TherapyTool | null>(null);
-  const tools = getTherapyTools().filter(tool => 
+  const [tools, setTools] = useState(getTherapyTools().filter(tool => 
     ['sensory', 'behavioral', 'social', 'motor', 'communication'].includes(tool.category)
-  );
+  ));
 
   // Filter tools based on search term and active category
   const filteredTools = filterTools(tools, searchTerm, activeCategory);
@@ -28,7 +29,7 @@ const CaregiverTools = () => {
 
   const downloadTool = (id: string) => {
     console.log(`Downloading tool: ${id}`);
-    alert(`Starting download for home support tool`);
+    toast.success(`Starting download for home support tool`);
     // Implementation would handle the download
   };
 
@@ -38,6 +39,12 @@ const CaregiverTools = () => {
 
   const closeToolDetails = () => {
     setSelectedTool(null);
+  };
+
+  const deleteTool = (id: string) => {
+    // Filter out the tool with the given id
+    setTools(tools.filter(tool => tool.id !== id));
+    toast.success(`Tool deleted successfully`);
   };
 
   return (
@@ -66,6 +73,7 @@ const CaregiverTools = () => {
             onToggleFavorite={toggleFavorite}
             onDownload={downloadTool}
             onViewDetails={openToolDetails}
+            onDelete={deleteTool}
           />
         </TabsContent>
       </Tabs>

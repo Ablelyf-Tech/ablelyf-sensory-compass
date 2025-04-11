@@ -9,6 +9,7 @@ interface TherapyToolsGridProps {
   onDownload: (id: string) => void;
   onViewDetails: (tool: TherapyTool) => void;
   getCategoryBadgeColor: (category: TherapyToolTypes) => string;
+  onDelete?: (id: string) => void;
 }
 
 export const TherapyToolsGrid: React.FC<TherapyToolsGridProps> = ({
@@ -16,7 +17,8 @@ export const TherapyToolsGrid: React.FC<TherapyToolsGridProps> = ({
   onToggleFavorite,
   onDownload,
   onViewDetails,
-  getCategoryBadgeColor
+  getCategoryBadgeColor,
+  onDelete
 }) => {
   if (tools.length === 0) {
     return (
@@ -33,10 +35,11 @@ export const TherapyToolsGrid: React.FC<TherapyToolsGridProps> = ({
         <TherapyToolCard
           key={tool.id}
           tool={tool}
-          onToggleFavorite={onToggleFavorite}
+          onToggleFavorite={toggleFavorite}
           onDownload={onDownload}
-          onViewDetails={onViewDetails}
+          onViewDetails={openToolDetails}
           getCategoryBadgeColor={getCategoryBadgeColor}
+          onDelete={onDelete}
         />
       ))}
     </div>

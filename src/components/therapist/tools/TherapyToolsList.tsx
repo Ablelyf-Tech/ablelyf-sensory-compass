@@ -6,6 +6,7 @@ import { getTherapyTools } from '@/data/therapyToolsData';
 import { TherapyToolsGrid } from './TherapyToolsGrid';
 import { TherapyToolDetails } from './TherapyToolDetails';
 import { filterTools, getCategoryBadgeColor } from './therapyToolsUtils';
+import { toast } from 'sonner';
 
 interface TherapyToolsListProps {
   searchTerm: string;
@@ -16,11 +17,11 @@ export const TherapyToolsList: React.FC<TherapyToolsListProps> = ({
   searchTerm, 
   activeCategory 
 }) => {
-  const allTools = getTherapyTools();
+  const [tools, setTools] = useState(getTherapyTools());
   const [selectedTool, setSelectedTool] = useState<TherapyTool | null>(null);
 
   // Filter tools based on search term and active category
-  const filteredTools = filterTools(allTools, searchTerm, activeCategory);
+  const filteredTools = filterTools(tools, searchTerm, activeCategory);
 
   const toggleFavorite = (id: string) => {
     console.log(`Favoriting tool: ${id}`);
@@ -29,7 +30,7 @@ export const TherapyToolsList: React.FC<TherapyToolsListProps> = ({
 
   const downloadTool = (id: string) => {
     console.log(`Downloading tool: ${id}`);
-    alert(`Starting download for therapy tool`);
+    toast.success(`Starting download for therapy tool`);
     // Implementation would handle the download
   };
 
@@ -41,6 +42,11 @@ export const TherapyToolsList: React.FC<TherapyToolsListProps> = ({
     setSelectedTool(null);
   };
 
+  const deleteTool = (id: string) => {
+    setTools(tools.filter(tool => tool.id !== id));
+    toast.success("Tool deleted successfully");
+  };
+
   return (
     <>
       <TherapyToolsGrid 
@@ -49,6 +55,7 @@ export const TherapyToolsList: React.FC<TherapyToolsListProps> = ({
         onDownload={downloadTool}
         onViewDetails={openToolDetails}
         getCategoryBadgeColor={getCategoryBadgeColor}
+        onDelete={deleteTool}
       />
 
       <TherapyToolDetails
