@@ -5,6 +5,7 @@ import { therapistRoutes } from "./therapistRoutes";
 import { caregiverRoutes } from "./caregiverRoutes";
 import { teacherRoutes } from "./teacherRoutes";
 import { hrRoutes } from "./hrRoutes";
+import { adminRoutes } from "./adminRoutes";
 import { sharedRoutes } from "./sharedRoutes";
 
 export const AppRoutes = () => {
@@ -16,6 +17,7 @@ export const AppRoutes = () => {
       {caregiverRoutes}
       {teacherRoutes}
       {hrRoutes}
+      {adminRoutes}
       {sharedRoutes}
       
       {/* Catch-all route - redirects to home page */}
