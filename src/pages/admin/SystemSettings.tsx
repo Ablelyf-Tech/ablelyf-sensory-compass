@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { PageTemplate } from "@/components/shared/PageTemplate";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +17,8 @@ import {
   FileJson, 
   CheckCircle, 
   Globe,
+  Home,
+  FolderTree,
 } from "lucide-react";
 import {
   Form,
@@ -82,11 +83,21 @@ const integrationSettingsSchema = z.object({
   integrationType: z.string().min(1, { message: "Integration type is required" }),
 });
 
+// Form schema for home settings
+const homeSettingsSchema = z.object({
+  defaultHomePage: z.string().min(1, { message: "Default home page is required" }),
+  enableCustomHomePage: z.boolean(),
+  customHomePageUrl: z.string().url({ message: "Must be a valid URL" }).optional(),
+  showFeaturedContent: z.boolean(),
+  categoryDisplay: z.string().min(1, { message: "Category display option is required" }),
+});
+
 type GeneralSettingsValues = z.infer<typeof generalSettingsSchema>;
 type SecuritySettingsValues = z.infer<typeof securitySettingsSchema>;
 type NotificationSettingsValues = z.infer<typeof notificationSettingsSchema>;
 type BackupSettingsValues = z.infer<typeof backupSettingsSchema>;
 type IntegrationSettingsValues = z.infer<typeof integrationSettingsSchema>;
+type HomeSettingsValues = z.infer<typeof homeSettingsSchema>;
 
 const SystemSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState("general");
@@ -145,6 +156,17 @@ const SystemSettings: React.FC = () => {
     },
   });
 
+  const homeForm = useForm<HomeSettingsValues>({
+    resolver: zodResolver(homeSettingsSchema),
+    defaultValues: {
+      defaultHomePage: "dashboard",
+      enableCustomHomePage: false,
+      customHomePageUrl: "https://ablelyf.com/home",
+      showFeaturedContent: true,
+      categoryDisplay: "grid",
+    },
+  });
+
   const handleSaveSettings = (
     data: any,
     settingType: string
@@ -161,7 +183,7 @@ const SystemSettings: React.FC = () => {
     <PageTemplate title="System Settings" description="Configure system-wide settings and preferences">
       <div className="space-y-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid grid-cols-5 w-full">
+          <TabsList className="grid grid-cols-6 w-full">
             <TabsTrigger value="general" className="flex items-center gap-2">
               <Settings className="h-4 w-4" />
               General
@@ -181,6 +203,10 @@ const SystemSettings: React.FC = () => {
             <TabsTrigger value="integrations" className="flex items-center gap-2">
               <FileJson className="h-4 w-4" />
               Integrations
+            </TabsTrigger>
+            <TabsTrigger value="home" className="flex items-center gap-2">
+              <Home className="h-4 w-4" />
+              Home
             </TabsTrigger>
           </TabsList>
 
@@ -861,6 +887,197 @@ const SystemSettings: React.FC = () => {
                     <Switch />
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Home Settings */}
+          <TabsContent value="home" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Home Page Settings</CardTitle>
+                <CardDescription>
+                  Configure the default home page and categories
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...homeForm}>
+                  <form 
+                    onSubmit={homeForm.handleSubmit((data) => handleSaveSettings(data, "home"))} 
+                    className="space-y-6"
+                  >
+                    <FormField
+                      control={homeForm.control}
+                      name="defaultHomePage"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Default Home Page</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select default home page" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="dashboard">Dashboard</SelectItem>
+                              <SelectItem value="therapyPlans">Therapy Plans</SelectItem>
+                              <SelectItem value="patients">Patients</SelectItem>
+                              <SelectItem value="schedule">Schedule</SelectItem>
+                              <SelectItem value="landingPage">Public Landing Page</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            The page users see when they first log in
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={homeForm.control}
+                      name="enableCustomHomePage"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Custom Home Page</FormLabel>
+                            <FormDescription>
+                              Allow users to set their own custom home page
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    {homeForm.watch("enableCustomHomePage") && (
+                      <FormField
+                        control={homeForm.control}
+                        name="customHomePageUrl"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Custom Home Page URL</FormLabel>
+                            <FormControl>
+                              <Input {...field} value={field.value || ""} />
+                            </FormControl>
+                            <FormDescription>
+                              URL for an external home page (must be a valid URL)
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                    
+                    <FormField
+                      control={homeForm.control}
+                      name="showFeaturedContent"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base">Featured Content</FormLabel>
+                            <FormDescription>
+                              Show featured content blocks on the home page
+                            </FormDescription>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={homeForm.control}
+                      name="categoryDisplay"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Category Display</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select category display" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="grid">Grid</SelectItem>
+                              <SelectItem value="list">List</SelectItem>
+                              <SelectItem value="carousel">Carousel</SelectItem>
+                              <SelectItem value="dropdown">Dropdown Menus</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            How categories are displayed on the home page
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <Card className="border-dashed">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">Category Management</CardTitle>
+                        <CardDescription>Manage homepage categories and subcategories</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <FolderTree className="h-5 w-5 text-ablelyf-blue-600" />
+                              <div>
+                                <h4 className="font-medium">Therapy Resources</h4>
+                                <p className="text-xs text-muted-foreground">5 subcategories</p>
+                              </div>
+                            </div>
+                            <Button variant="outline" size="sm">Manage</Button>
+                          </div>
+                          
+                          <div className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <FolderTree className="h-5 w-5 text-ablelyf-green-600" />
+                              <div>
+                                <h4 className="font-medium">Learning Modules</h4>
+                                <p className="text-xs text-muted-foreground">3 subcategories</p>
+                              </div>
+                            </div>
+                            <Button variant="outline" size="sm">Manage</Button>
+                          </div>
+                          
+                          <div className="flex items-center justify-between p-3 border rounded-lg">
+                            <div className="flex items-center gap-3">
+                              <FolderTree className="h-5 w-5 text-ablelyf-purple-600" />
+                              <div>
+                                <h4 className="font-medium">Assessments</h4>
+                                <p className="text-xs text-muted-foreground">4 subcategories</p>
+                              </div>
+                            </div>
+                            <Button variant="outline" size="sm">Manage</Button>
+                          </div>
+                          
+                          <Button variant="secondary" className="w-full">
+                            Add New Category
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    
+                    <Button type="submit">Save Home Settings</Button>
+                  </form>
+                </Form>
               </CardContent>
             </Card>
           </TabsContent>
