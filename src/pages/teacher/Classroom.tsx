@@ -1,69 +1,17 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Filter, Plus, Users, UserPlus, Eye } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { toast } from 'sonner';
+import ClassroomHeader from '@/components/teacher/classroom/ClassroomHeader';
+import ClassroomSearch from '@/components/teacher/classroom/ClassroomSearch';
+import StudentsList from '@/components/teacher/classroom/StudentsList';
+import { mockStudents } from '@/components/teacher/classroom/mockData';
 
 const Classroom = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   
-  // Mock student data
-  const students = [
-    { 
-      id: 1, 
-      name: 'Jamie Rodriguez', 
-      age: 9,
-      grade: '3rd Grade',
-      accommodations: ['Visual supports', 'Noise-canceling headphones', 'Movement breaks'],
-      status: 'Active IEP',
-      lastAssessment: '2025-03-15'
-    },
-    { 
-      id: 2, 
-      name: 'Taylor Wilson', 
-      age: 8,
-      grade: '3rd Grade',
-      accommodations: ['Extended time', 'Preferential seating', 'Written instructions'],
-      status: 'Active 504',
-      lastAssessment: '2025-03-01'
-    },
-    { 
-      id: 3, 
-      name: 'Alex Chen', 
-      age: 9,
-      grade: '3rd Grade',
-      accommodations: ['Visual schedule', 'Fidget tools', 'Check-in system'],
-      status: 'Under Evaluation',
-      lastAssessment: '2025-04-02'
-    },
-    { 
-      id: 4, 
-      name: 'Jordan Santos', 
-      age: 8,
-      grade: '3rd Grade',
-      accommodations: ['Simplified directions', 'Frequent breaks', 'Sensory tools'],
-      status: 'Active IEP',
-      lastAssessment: '2025-02-20'
-    },
-    { 
-      id: 5, 
-      name: 'Riley Kim', 
-      age: 9,
-      grade: '3rd Grade',
-      accommodations: ['Visual timer', 'Alternate workspace', 'Movement opportunities'],
-      status: 'Active 504',
-      lastAssessment: '2025-03-10'
-    },
-  ];
-
   // Filter students based on search term and active tab
-  const filteredStudents = students.filter(student => {
+  const filteredStudents = mockStudents.filter(student => {
     const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         student.status.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -75,96 +23,22 @@ const Classroom = () => {
     return matchesSearch;
   });
 
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'Active IEP':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'Active 504':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'Under Evaluation':
-        return 'bg-amber-100 text-amber-800 border-amber-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getInitials = (name) => {
-    return name.split(' ').map(n => n[0]).join('');
-  };
-
-  const handleAddStudent = () => {
-    toast.success('Add student functionality coming soon!');
-  };
-
-  const handleViewProfile = (studentId) => {
-    toast.success(`Viewing profile for student ID: ${studentId}`);
-  };
-
-  const handleTrackProgress = (studentId) => {
-    toast.success(`Tracking progress for student ID: ${studentId}`);
-  };
-
-  const handleAddNote = (studentId) => {
-    toast.success(`Adding note for student ID: ${studentId}`);
+  // Calculate stats for the header
+  const stats = {
+    total: 26, // Example total value
+    iep: 8,
+    plan504: 5,
+    evaluation: 3
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Classroom Management</h1>
-        <p className="text-muted-foreground">
-          Manage your classroom and student accommodations
-        </p>
-      </div>
+      <ClassroomHeader stats={stats} />
 
-      <div className="flex justify-between flex-wrap gap-2">
-        <Card className="w-full md:w-[49%] lg:w-[24%]">
-          <CardContent className="p-4 flex flex-col items-center justify-center">
-            <div className="text-4xl font-bold mb-1">26</div>
-            <div className="text-sm text-muted-foreground">Total Students</div>
-          </CardContent>
-        </Card>
-        <Card className="w-full md:w-[49%] lg:w-[24%]">
-          <CardContent className="p-4 flex flex-col items-center justify-center">
-            <div className="text-4xl font-bold mb-1">8</div>
-            <div className="text-sm text-muted-foreground">Students with IEPs</div>
-          </CardContent>
-        </Card>
-        <Card className="w-full md:w-[49%] lg:w-[24%]">
-          <CardContent className="p-4 flex flex-col items-center justify-center">
-            <div className="text-4xl font-bold mb-1">5</div>
-            <div className="text-sm text-muted-foreground">Students with 504s</div>
-          </CardContent>
-        </Card>
-        <Card className="w-full md:w-[49%] lg:w-[24%]">
-          <CardContent className="p-4 flex flex-col items-center justify-center">
-            <div className="text-4xl font-bold mb-1">3</div>
-            <div className="text-sm text-muted-foreground">Under Evaluation</div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input 
-            placeholder="Search students..." 
-            className="pl-10"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" className="sm:w-auto">
-            <Filter className="mr-2 h-4 w-4" />
-            Filter
-          </Button>
-          <Button className="sm:w-auto" onClick={handleAddStudent}>
-            <UserPlus className="mr-2 h-4 w-4" />
-            Add Student
-          </Button>
-        </div>
-      </div>
+      <ClassroomSearch 
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+      />
 
       <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
@@ -175,227 +49,30 @@ const Classroom = () => {
         </TabsList>
         
         <TabsContent value="all" className="space-y-4 mt-4">
-          {filteredStudents.length === 0 ? (
-            <Card>
-              <CardContent className="py-6 text-center">
-                <p>No students match your search criteria.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredStudents.map(student => (
-              <Card key={student.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">{student.name}</CardTitle>
-                        <CardDescription>{student.age} years old • {student.grade}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(student.status)}>{student.status}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div>
-                      <strong className="text-sm text-muted-foreground">Accommodations:</strong>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {student.accommodations.map((accommodation, index) => (
-                          <Badge key={index} variant="outline">{accommodation}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Last assessment: {student.lastAssessment}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => handleViewProfile(student.id)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Profile
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleTrackProgress(student.id)}>
-                    Track Progress
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleAddNote(student.id)}>
-                    Add Note
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))
-          )}
+          <StudentsList 
+            students={filteredStudents} 
+          />
         </TabsContent>
         
         <TabsContent value="iep" className="space-y-4 mt-4">
-          {filteredStudents.length === 0 ? (
-            <Card>
-              <CardContent className="py-6 text-center">
-                <p>No students with IEPs match your search criteria.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredStudents.map(student => (
-              <Card key={student.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">{student.name}</CardTitle>
-                        <CardDescription>{student.age} years old • {student.grade}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(student.status)}>{student.status}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div>
-                      <strong className="text-sm text-muted-foreground">Accommodations:</strong>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {student.accommodations.map((accommodation, index) => (
-                          <Badge key={index} variant="outline">{accommodation}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Last assessment: {student.lastAssessment}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => handleViewProfile(student.id)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Profile
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleTrackProgress(student.id)}>
-                    Track Progress
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleAddNote(student.id)}>
-                    Add Note
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))
-          )}
+          <StudentsList 
+            students={filteredStudents}
+            emptyMessage="No students with IEPs match your search criteria."
+          />
         </TabsContent>
         
         <TabsContent value="504" className="space-y-4 mt-4">
-          {filteredStudents.length === 0 ? (
-            <Card>
-              <CardContent className="py-6 text-center">
-                <p>No students with 504 plans match your search criteria.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredStudents.map(student => (
-              <Card key={student.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">{student.name}</CardTitle>
-                        <CardDescription>{student.age} years old • {student.grade}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(student.status)}>{student.status}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div>
-                      <strong className="text-sm text-muted-foreground">Accommodations:</strong>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {student.accommodations.map((accommodation, index) => (
-                          <Badge key={index} variant="outline">{accommodation}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Last assessment: {student.lastAssessment}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => handleViewProfile(student.id)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Profile
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleTrackProgress(student.id)}>
-                    Track Progress
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleAddNote(student.id)}>
-                    Add Note
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))
-          )}
+          <StudentsList 
+            students={filteredStudents}
+            emptyMessage="No students with 504 plans match your search criteria."
+          />
         </TabsContent>
         
         <TabsContent value="evaluation" className="space-y-4 mt-4">
-          {filteredStudents.length === 0 ? (
-            <Card>
-              <CardContent className="py-6 text-center">
-                <p>No students under evaluation match your search criteria.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredStudents.map(student => (
-              <Card key={student.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">{student.name}</CardTitle>
-                        <CardDescription>{student.age} years old • {student.grade}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(student.status)}>{student.status}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div>
-                      <strong className="text-sm text-muted-foreground">Accommodations:</strong>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {student.accommodations.map((accommodation, index) => (
-                          <Badge key={index} variant="outline">{accommodation}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Last assessment: {student.lastAssessment}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => handleViewProfile(student.id)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Profile
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleTrackProgress(student.id)}>
-                    Track Progress
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleAddNote(student.id)}>
-                    Add Note
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))
-          )}
+          <StudentsList 
+            students={filteredStudents}
+            emptyMessage="No students under evaluation match your search criteria."
+          />
         </TabsContent>
       </Tabs>
     </div>
