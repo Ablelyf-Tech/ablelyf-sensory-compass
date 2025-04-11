@@ -152,7 +152,6 @@ const ReportForm: React.FC<ReportFormProps> = ({
           form={form}
           name="behavioralProgress"
           label="Behavioral Progress"
-          label="Behavioral Progress"
           placeholder="Describe behavioral progress during this period"
           rows={3}
         />
