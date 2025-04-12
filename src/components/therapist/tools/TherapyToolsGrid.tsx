@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { TherapyTool, TherapyToolTypes } from '@/types';
-import { TherapyToolCard } from './TherapyToolCard';
+import { TherapyToolGridItem } from './TherapyToolGridItem';
+import { EmptyToolsState } from './EmptyToolsState';
 
 interface TherapyToolsGridProps {
   tools: TherapyTool[];
@@ -21,18 +22,13 @@ export const TherapyToolsGrid: React.FC<TherapyToolsGridProps> = ({
   onDelete
 }) => {
   if (tools.length === 0) {
-    return (
-      <div className="bg-muted p-8 rounded-md text-center">
-        <h3 className="text-lg font-medium mb-2">No tools found</h3>
-        <p className="text-muted-foreground">Try adjusting your search criteria or category selection.</p>
-      </div>
-    );
+    return <EmptyToolsState />;
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
       {tools.map(tool => (
-        <TherapyToolCard
+        <TherapyToolGridItem
           key={tool.id}
           tool={tool}
           onToggleFavorite={onToggleFavorite}
