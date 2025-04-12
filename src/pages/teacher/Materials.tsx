@@ -1,54 +1,90 @@
 
 import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
-import { MaterialsSearchBar } from '@/components/teacher/materials/MaterialsSearchBar';
-import { MaterialsList } from '@/components/teacher/materials/MaterialsList';
-import { 
-  getCategoryColorScheme, 
-  MATERIAL_CATEGORIES, 
-  mockMaterials, 
-  MaterialItem 
-} from '@/components/teacher/materials/MaterialsUtils';
+import { Search, Filter, Plus, Download, Upload, FileText, ExternalLink } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 const Materials = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
-  const [materials, setMaterials] = useState<MaterialItem[]>(mockMaterials);
   
-  // Filter materials based on search term and active tab
-  const filteredMaterials = materials.filter(material => {
-    const matchesSearch = 
-      material.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    if (activeTab === 'all') return matchesSearch;
-    
-    const activeCategory = MATERIAL_CATEGORIES.find(cat => cat.id === activeTab)?.category;
-    return matchesSearch && material.category === activeCategory;
-  });
+  // Mock materials data
+  const materials = [
+    { 
+      id: 1, 
+      title: 'Visual Schedule Templates', 
+      description: 'Customizable visual schedule templates for daily classroom routines.',
+      category: 'Visual Supports',
+      fileType: 'PDF, DOCX',
+      fileSize: '2.5 MB',
+      tags: ['Visual', 'Organization', 'Routine']
+    },
+    { 
+      id: 2, 
+      title: 'Sensory Break Activity Cards', 
+      description: 'Printable cards with sensory break activities for classroom use.',
+      category: 'Sensory',
+      fileType: 'PDF',
+      fileSize: '1.8 MB',
+      tags: ['Sensory', 'Movement', 'Regulation']
+    },
+    { 
+      id: 3, 
+      title: 'Social Story Templates', 
+      description: 'Editable social story templates for various classroom situations.',
+      category: 'Social Emotional',
+      fileType: 'DOCX, PPT',
+      fileSize: '3.2 MB',
+      tags: ['Social', 'Communication', 'Behavior']
+    },
+    { 
+      id: 4, 
+      title: 'Modified Math Worksheets', 
+      description: 'Math practice sheets with visual supports and scaffolded problems.',
+      category: 'Academic',
+      fileType: 'PDF',
+      fileSize: '5.1 MB',
+      tags: ['Math', 'Modification', 'Visual']
+    },
+    { 
+      id: 5, 
+      title: 'Executive Function Organizers', 
+      description: 'Graphic organizers to support planning, organization, and time management.',
+      category: 'Executive Function',
+      fileType: 'PDF, DOCX',
+      fileSize: '2.3 MB',
+      tags: ['Organization', 'Planning', 'Time Management']
+    },
+    { 
+      id: 6, 
+      title: 'Calming Corner Resources', 
+      description: 'Printable resources for setting up a classroom calming corner.',
+      category: 'Sensory',
+      fileType: 'PDF, JPG',
+      fileSize: '4.7 MB',
+      tags: ['Regulation', 'Sensory', 'Environment']
+    },
+  ];
 
-  const handleUpload = () => {
-    toast.success('Upload functionality coming soon!');
-  };
+  // Filter materials based on search term
+  const filteredMaterials = materials.filter(material => 
+    material.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    material.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    material.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    material.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
-  const handleDownload = (id: number) => {
-    toast.success(`Downloading material ID: ${id}`);
-  };
-
-  const handlePreview = (id: number) => {
-    toast.success(`Previewing material ID: ${id}`);
-  };
-
-  const handleOpenExternal = (id: number) => {
-    toast.success(`Opening material ID: ${id} in new tab`);
-  };
-
-  const handleDelete = (id: number) => {
-    setMaterials(materials.filter(material => material.id !== id));
-    toast.success('Material deleted successfully');
+  const getCategoryColor = (category) => {
+    const colors = {
+      'Visual Supports': 'bg-amber-100 text-amber-800 border-amber-200',
+      'Sensory': 'bg-indigo-100 text-indigo-800 border-indigo-200',
+      'Social Emotional': 'bg-pink-100 text-pink-800 border-pink-200',
+      'Academic': 'bg-blue-100 text-blue-800 border-blue-200',
+      'Executive Function': 'bg-purple-100 text-purple-800 border-purple-200',
+    };
+    return colors[category] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
 
   return (
@@ -60,33 +96,132 @@ const Materials = () => {
         </p>
       </div>
 
-      <MaterialsSearchBar 
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-        onUpload={handleUpload}
-      />
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+          <Input 
+            placeholder="Search materials..." 
+            className="pl-10"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" className="sm:w-auto">
+            <Filter className="mr-2 h-4 w-4" />
+            Filter
+          </Button>
+          <Button className="sm:w-auto">
+            <Upload className="mr-2 h-4 w-4" />
+            Upload
+          </Button>
+        </div>
+      </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="all">
         <TabsList>
-          {MATERIAL_CATEGORIES.map(category => (
-            <TabsTrigger key={category.id} value={category.id}>
-              {category.label}
-            </TabsTrigger>
-          ))}
+          <TabsTrigger value="all">All Materials</TabsTrigger>
+          <TabsTrigger value="visual">Visual Supports</TabsTrigger>
+          <TabsTrigger value="sensory">Sensory</TabsTrigger>
+          <TabsTrigger value="social">Social Emotional</TabsTrigger>
+          <TabsTrigger value="academic">Academic</TabsTrigger>
         </TabsList>
         
-        {MATERIAL_CATEGORIES.map(category => (
-          <TabsContent key={category.id} value={category.id} className="mt-4">
-            <MaterialsList
-              materials={filteredMaterials}
-              getCategoryColor={getCategoryColorScheme}
-              onDownload={handleDownload}
-              onPreview={handlePreview}
-              onOpenExternal={handleOpenExternal}
-              onDelete={handleDelete}
-            />
-          </TabsContent>
-        ))}
+        <TabsContent value="all" className="mt-4">
+          {filteredMaterials.length === 0 ? (
+            <Card>
+              <CardContent className="py-6 text-center">
+                <p>No materials match your search criteria.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredMaterials.map(material => (
+                <Card key={material.id} className="flex flex-col h-full">
+                  <CardHeader className="pb-2">
+                    <div>
+                      <Badge className={getCategoryColor(material.category)}>
+                        {material.category}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-lg mt-2">{material.title}</CardTitle>
+                    <CardDescription className="line-clamp-2">{material.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pb-2 flex-grow">
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {material.tags.map((tag, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="text-sm text-muted-foreground flex items-center gap-x-4">
+                      <span>{material.fileType}</span>
+                      <span>{material.fileSize}</span>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="pt-2 flex gap-2">
+                    <Button 
+                      variant="secondary" 
+                      size="sm" 
+                      className="flex-1"
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Download
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Preview
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-9 p-0" 
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          )}
+        </TabsContent>
+        
+        <TabsContent value="visual" className="mt-4">
+          <Card>
+            <CardContent className="py-6 text-center">
+              <p>Showing visual support materials.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="sensory" className="mt-4">
+          <Card>
+            <CardContent className="py-6 text-center">
+              <p>Showing sensory materials.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="social" className="mt-4">
+          <Card>
+            <CardContent className="py-6 text-center">
+              <p>Showing social emotional materials.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="academic" className="mt-4">
+          <Card>
+            <CardContent className="py-6 text-center">
+              <p>Showing academic materials.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   );

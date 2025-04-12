@@ -7,11 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Filter, Plus, Users, UserPlus, Eye } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { toast } from 'sonner';
 
 const Classroom = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
   
   // Mock student data
   const students = [
@@ -62,18 +60,11 @@ const Classroom = () => {
     },
   ];
 
-  // Filter students based on search term and active tab
-  const filteredStudents = students.filter(student => {
-    const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        student.status.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    if (activeTab === 'all') return matchesSearch;
-    if (activeTab === 'iep') return matchesSearch && student.status === 'Active IEP';
-    if (activeTab === '504') return matchesSearch && student.status === 'Active 504';
-    if (activeTab === 'evaluation') return matchesSearch && student.status === 'Under Evaluation';
-    
-    return matchesSearch;
-  });
+  // Filter students based on search term
+  const filteredStudents = students.filter(student => 
+    student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    student.status.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const getStatusColor = (status) => {
     switch(status) {
@@ -90,22 +81,6 @@ const Classroom = () => {
 
   const getInitials = (name) => {
     return name.split(' ').map(n => n[0]).join('');
-  };
-
-  const handleAddStudent = () => {
-    toast.success('Add student functionality coming soon!');
-  };
-
-  const handleViewProfile = (studentId) => {
-    toast.success(`Viewing profile for student ID: ${studentId}`);
-  };
-
-  const handleTrackProgress = (studentId) => {
-    toast.success(`Tracking progress for student ID: ${studentId}`);
-  };
-
-  const handleAddNote = (studentId) => {
-    toast.success(`Adding note for student ID: ${studentId}`);
   };
 
   return (
@@ -159,14 +134,14 @@ const Classroom = () => {
             <Filter className="mr-2 h-4 w-4" />
             Filter
           </Button>
-          <Button className="sm:w-auto" onClick={handleAddStudent}>
+          <Button className="sm:w-auto">
             <UserPlus className="mr-2 h-4 w-4" />
             Add Student
           </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs defaultValue="all">
         <TabsList>
           <TabsTrigger value="all">All Students</TabsTrigger>
           <TabsTrigger value="iep">IEP</TabsTrigger>
@@ -214,14 +189,14 @@ const Classroom = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => handleViewProfile(student.id)}>
+                  <Button variant="secondary" size="sm">
                     <Eye className="mr-2 h-4 w-4" />
                     View Profile
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleTrackProgress(student.id)}>
+                  <Button variant="outline" size="sm">
                     Track Progress
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleAddNote(student.id)}>
+                  <Button variant="outline" size="sm">
                     Add Note
                   </Button>
                 </CardFooter>
@@ -231,171 +206,27 @@ const Classroom = () => {
         </TabsContent>
         
         <TabsContent value="iep" className="space-y-4 mt-4">
-          {filteredStudents.length === 0 ? (
-            <Card>
-              <CardContent className="py-6 text-center">
-                <p>No students with IEPs match your search criteria.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredStudents.map(student => (
-              <Card key={student.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">{student.name}</CardTitle>
-                        <CardDescription>{student.age} years old • {student.grade}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(student.status)}>{student.status}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div>
-                      <strong className="text-sm text-muted-foreground">Accommodations:</strong>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {student.accommodations.map((accommodation, index) => (
-                          <Badge key={index} variant="outline">{accommodation}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Last assessment: {student.lastAssessment}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => handleViewProfile(student.id)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Profile
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleTrackProgress(student.id)}>
-                    Track Progress
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleAddNote(student.id)}>
-                    Add Note
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))
-          )}
+          <Card>
+            <CardContent className="py-6 text-center">
+              <p>Showing students with active IEPs.</p>
+            </CardContent>
+          </Card>
         </TabsContent>
         
         <TabsContent value="504" className="space-y-4 mt-4">
-          {filteredStudents.length === 0 ? (
-            <Card>
-              <CardContent className="py-6 text-center">
-                <p>No students with 504 plans match your search criteria.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredStudents.map(student => (
-              <Card key={student.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">{student.name}</CardTitle>
-                        <CardDescription>{student.age} years old • {student.grade}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(student.status)}>{student.status}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div>
-                      <strong className="text-sm text-muted-foreground">Accommodations:</strong>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {student.accommodations.map((accommodation, index) => (
-                          <Badge key={index} variant="outline">{accommodation}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Last assessment: {student.lastAssessment}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => handleViewProfile(student.id)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Profile
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleTrackProgress(student.id)}>
-                    Track Progress
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleAddNote(student.id)}>
-                    Add Note
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))
-          )}
+          <Card>
+            <CardContent className="py-6 text-center">
+              <p>Showing students with 504 plans.</p>
+            </CardContent>
+          </Card>
         </TabsContent>
         
         <TabsContent value="evaluation" className="space-y-4 mt-4">
-          {filteredStudents.length === 0 ? (
-            <Card>
-              <CardContent className="py-6 text-center">
-                <p>No students under evaluation match your search criteria.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredStudents.map(student => (
-              <Card key={student.id}>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <Avatar>
-                        <AvatarFallback>{getInitials(student.name)}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <CardTitle className="text-lg">{student.name}</CardTitle>
-                        <CardDescription>{student.age} years old • {student.grade}</CardDescription>
-                      </div>
-                    </div>
-                    <Badge className={getStatusColor(student.status)}>{student.status}</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div>
-                      <strong className="text-sm text-muted-foreground">Accommodations:</strong>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {student.accommodations.map((accommodation, index) => (
-                          <Badge key={index} variant="outline">{accommodation}</Badge>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Last assessment: {student.lastAssessment}
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="flex gap-2 pt-1">
-                  <Button variant="secondary" size="sm" onClick={() => handleViewProfile(student.id)}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View Profile
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleTrackProgress(student.id)}>
-                    Track Progress
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleAddNote(student.id)}>
-                    Add Note
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))
-          )}
+          <Card>
+            <CardContent className="py-6 text-center">
+              <p>Showing students currently under evaluation.</p>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

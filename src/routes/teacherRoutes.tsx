@@ -1,48 +1,22 @@
 
 import { Route } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
-import { TeacherLayout } from "@/components/layout/TeacherLayout";
-import TeacherDashboard from "@/pages/teacher/TeacherDashboard";
-import VideoSession from "@/pages/VideoSession";
+import { AppLayout } from "@/components/layout/AppLayout";
 import Classroom from "@/pages/teacher/Classroom";
 import ProgressReports from "@/pages/teacher/ProgressReports";
 import Materials from "@/pages/teacher/Materials";
-import TeacherTools from "@/pages/teacher/TeacherTools";
 import TeacherCalendar from "@/pages/teacher/Calendar";
+import TeacherTools from "@/pages/teacher/TeacherTools";
 
 export const teacherRoutes = [
-  <Route 
-    key="dashboard"
-    path="/dashboard" 
-    element={
-      <ProtectedRoute>
-        <TeacherLayout>
-          <TeacherDashboard />
-        </TeacherLayout>
-      </ProtectedRoute>
-    } 
-  />,
-  
-  <Route 
-    key="video-session"
-    path="/video-session" 
-    element={
-      <ProtectedRoute>
-        <TeacherLayout>
-          <VideoSession />
-        </TeacherLayout>
-      </ProtectedRoute>
-    } 
-  />,
-  
   <Route 
     key="classroom"
     path="/classroom" 
     element={
       <ProtectedRoute>
-        <TeacherLayout>
+        <AppLayout>
           <Classroom />
-        </TeacherLayout>
+        </AppLayout>
       </ProtectedRoute>
     } 
   />,
@@ -52,9 +26,9 @@ export const teacherRoutes = [
     path="/progress" 
     element={
       <ProtectedRoute>
-        <TeacherLayout>
+        <AppLayout>
           <ProgressReports />
-        </TeacherLayout>
+        </AppLayout>
       </ProtectedRoute>
     } 
   />,
@@ -64,9 +38,9 @@ export const teacherRoutes = [
     path="/materials" 
     element={
       <ProtectedRoute>
-        <TeacherLayout>
+        <AppLayout>
           <Materials />
-        </TeacherLayout>
+        </AppLayout>
       </ProtectedRoute>
     } 
   />,
@@ -76,9 +50,9 @@ export const teacherRoutes = [
     path="/teacher-tools" 
     element={
       <ProtectedRoute>
-        <TeacherLayout>
+        <AppLayout>
           <TeacherTools />
-        </TeacherLayout>
+        </AppLayout>
       </ProtectedRoute>
     } 
   />,
@@ -88,9 +62,7 @@ export const teacherRoutes = [
     path="/teacher-calendar" 
     element={
       <ProtectedRoute>
-        <TeacherLayout>
-          <TeacherCalendar />
-        </TeacherLayout>
+        <TeacherCalendar />
       </ProtectedRoute>
     } 
   />

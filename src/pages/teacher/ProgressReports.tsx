@@ -4,21 +4,17 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, Filter, Plus, Download, LineChart, FileText, Calendar, Edit, Trash } from 'lucide-react';
+import { Search, Filter, Plus, Download, LineChart, FileText } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, Legend,
-  PieChart, Pie, Cell
+  ResponsiveContainer, Legend 
 } from 'recharts';
-import { toast } from 'sonner';
 
 const ProgressReports = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [selectedReportType, setSelectedReportType] = useState('goals');
   
   // Mock student data with goals
   const students = [
@@ -32,20 +28,6 @@ const ProgressReports = () => {
         { id: 2, name: 'Self-Regulation', progress: 60, target: 'Use calming strategies independently when frustrated' },
         { id: 3, name: 'Math Problem Solving', progress: 40, target: 'Solve multi-step word problems with 70% accuracy' }
       ],
-      attendance: { present: 85, absent: 10, tardy: 5 },
-      behavior: [
-        { category: 'Following Directions', score: 4, outOf: 5 },
-        { category: 'Participation', score: 3, outOf: 5 },
-        { category: 'Task Completion', score: 4, outOf: 5 },
-        { category: 'Peer Interactions', score: 3, outOf: 5 }
-      ],
-      academics: {
-        reading: 72,
-        writing: 68,
-        math: 75,
-        science: 80,
-        socialStudies: 78
-      },
       reportDue: '2025-05-15'
     },
     { 
@@ -57,20 +39,6 @@ const ProgressReports = () => {
         { id: 1, name: 'Writing Organization', progress: 80, target: 'Use graphic organizers to plan writing independently' },
         { id: 2, name: 'Attention', progress: 65, target: 'Stay on task for 15 minutes with one verbal reminder' }
       ],
-      attendance: { present: 90, absent: 5, tardy: 5 },
-      behavior: [
-        { category: 'Following Directions', score: 3, outOf: 5 },
-        { category: 'Participation', score: 4, outOf: 5 },
-        { category: 'Task Completion', score: 3, outOf: 5 },
-        { category: 'Peer Interactions', score: 5, outOf: 5 }
-      ],
-      academics: {
-        reading: 85,
-        writing: 70,
-        math: 75,
-        science: 82,
-        socialStudies: 88
-      },
       reportDue: '2025-05-10'
     },
     { 
@@ -83,20 +51,6 @@ const ProgressReports = () => {
         { id: 2, name: 'Following Directions', progress: 70, target: 'Follow 2-step directions with 80% accuracy' },
         { id: 3, name: 'Fine Motor Skills', progress: 45, target: 'Complete handwriting tasks with appropriate letter size and spacing' }
       ],
-      attendance: { present: 95, absent: 3, tardy: 2 },
-      behavior: [
-        { category: 'Following Directions', score: 2, outOf: 5 },
-        { category: 'Participation', score: 3, outOf: 5 },
-        { category: 'Task Completion', score: 2, outOf: 5 },
-        { category: 'Peer Interactions', score: 2, outOf: 5 }
-      ],
-      academics: {
-        reading: 65,
-        writing: 60,
-        math: 80,
-        science: 85,
-        socialStudies: 70
-      },
       reportDue: '2025-04-30'
     },
   ];
@@ -127,43 +81,6 @@ const ProgressReports = () => {
     Target: 100
   })) || [];
 
-  // Attendance data for pie chart
-  const attendanceData = selectedStudent ? [
-    { name: 'Present', value: selectedStudent.attendance.present, color: '#4ade80' },
-    { name: 'Absent', value: selectedStudent.attendance.absent, color: '#f87171' },
-    { name: 'Tardy', value: selectedStudent.attendance.tardy, color: '#facc15' }
-  ] : [];
-
-  // Academic data for chart
-  const academicData = selectedStudent ? [
-    { subject: 'Reading', score: selectedStudent.academics.reading },
-    { subject: 'Writing', score: selectedStudent.academics.writing },
-    { subject: 'Math', score: selectedStudent.academics.math },
-    { subject: 'Science', score: selectedStudent.academics.science },
-    { subject: 'Social Studies', score: selectedStudent.academics.socialStudies }
-  ] : [];
-
-  const handleNewReport = () => {
-    toast.success('New report functionality coming soon!');
-  };
-
-  const handleGenerateReport = () => {
-    if (!selectedStudent) {
-      toast.error('Please select a student first');
-      return;
-    }
-    toast.success(`Generating report for ${selectedStudent.name}`);
-  };
-
-  const handleUpdateProgress = (goalId) => {
-    toast.success(`Updating progress for goal ID: ${goalId}`);
-  };
-
-  const handleDeleteGoal = (goalId) => {
-    toast.success(`Goal ID: ${goalId} deleted`);
-    // In a real application, you would update the state or make an API call here
-  };
-
   return (
     <div className="space-y-6">
       <div>
@@ -188,7 +105,7 @@ const ProgressReports = () => {
             <Filter className="mr-2 h-4 w-4" />
             Filter
           </Button>
-          <Button className="sm:w-auto" onClick={handleNewReport}>
+          <Button className="sm:w-auto">
             <Plus className="mr-2 h-4 w-4" />
             New Report
           </Button>
@@ -244,105 +161,30 @@ const ProgressReports = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <Tabs 
-                    value={selectedReportType} 
-                    onValueChange={setSelectedReportType} 
-                    className="w-full"
-                  >
-                    <TabsList className="w-full grid grid-cols-4">
-                      <TabsTrigger value="goals">Goals</TabsTrigger>
-                      <TabsTrigger value="academics">Academics</TabsTrigger>
-                      <TabsTrigger value="behavior">Behavior</TabsTrigger>
-                      <TabsTrigger value="attendance">Attendance</TabsTrigger>
-                    </TabsList>
-                    
-                    <TabsContent value="goals" className="mt-4">
-                      <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            data={goalProgressData}
-                            margin={{
-                              top: 20,
-                              right: 30,
-                              left: 20,
-                              bottom: 5,
-                            }}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Bar dataKey="Current" fill="#8884d8" />
-                            <Bar dataKey="Target" fill="#82ca9d" />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="academics" className="mt-4">
-                      <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            data={academicData}
-                            margin={{
-                              top: 20,
-                              right: 30,
-                              left: 20,
-                              bottom: 5,
-                            }}
-                          >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="subject" />
-                            <YAxis domain={[0, 100]} />
-                            <Tooltip />
-                            <Bar dataKey="score" fill="#60a5fa" />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="behavior" className="mt-4">
-                      <div className="space-y-4">
-                        {selectedStudent.behavior.map((item, index) => (
-                          <div key={index} className="space-y-2">
-                            <div className="flex justify-between items-center">
-                              <span>{item.category}</span>
-                              <span>{item.score}/{item.outOf}</span>
-                            </div>
-                            <Progress value={(item.score / item.outOf) * 100} />
-                          </div>
-                        ))}
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="attendance" className="mt-4">
-                      <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={attendanceData}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                              outerRadius={80}
-                              fill="#8884d8"
-                              dataKey="value"
-                            >
-                              {attendanceData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                            <Tooltip />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={goalProgressData}
+                        margin={{
+                          top: 20,
+                          right: 30,
+                          left: 20,
+                          bottom: 5,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="Current" fill="#8884d8" />
+                        <Bar dataKey="Target" fill="#82ca9d" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
                 </CardContent>
                 <CardFooter className="flex gap-2">
-                  <Button onClick={handleGenerateReport}>
+                  <Button>
                     <FileText className="mr-2 h-4 w-4" />
                     Generate Report
                   </Button>
@@ -350,22 +192,11 @@ const ProgressReports = () => {
                     <Download className="mr-2 h-4 w-4" />
                     Download Data
                   </Button>
-                  <Button variant="outline">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Schedule Review
-                  </Button>
                 </CardFooter>
               </Card>
 
               <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold">Progress Toward Goals</h3>
-                  <Button size="sm" variant="outline">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Goal
-                  </Button>
-                </div>
-                
+                <h3 className="text-lg font-semibold">Progress Toward Goals</h3>
                 {selectedStudent.goals.map(goal => (
                   <Card key={goal.id}>
                     <CardHeader className="pb-2">
@@ -381,15 +212,8 @@ const ProgressReports = () => {
                         <Progress value={goal.progress} />
                       </div>
                     </CardContent>
-                    <CardFooter className="pt-0 flex gap-2">
-                      <Button variant="outline" size="sm" onClick={() => handleUpdateProgress(goal.id)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Update
-                      </Button>
-                      <Button variant="outline" size="sm" className="text-destructive hover:text-destructive" onClick={() => handleDeleteGoal(goal.id)}>
-                        <Trash className="mr-2 h-4 w-4" />
-                        Delete
-                      </Button>
+                    <CardFooter className="pt-0">
+                      <Button variant="outline" size="sm">Update Progress</Button>
                     </CardFooter>
                   </Card>
                 ))}
