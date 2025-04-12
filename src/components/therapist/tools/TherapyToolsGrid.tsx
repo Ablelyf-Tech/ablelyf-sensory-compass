@@ -35,9 +35,9 @@ export const TherapyToolsGrid: React.FC<TherapyToolsGridProps> = ({
         <TherapyToolCard
           key={tool.id}
           tool={tool}
-          onToggleFavorite={toggleFavorite}
+          onToggleFavorite={onToggleFavorite}
           onDownload={onDownload}
-          onViewDetails={openToolDetails}
+          onViewDetails={onViewDetails}
           getCategoryBadgeColor={getCategoryBadgeColor}
           onDelete={onDelete}
         />
